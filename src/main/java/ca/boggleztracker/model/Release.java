@@ -13,4 +13,12 @@ public class Release {
         this.releaseID = releaseID;
         this.date = date;
     }
+
+    public List<ChangeItem> getChanges() {
+        return changes;
+    }
+
+    public ChangeItem getSpecifedChangeItem(int changeID) {
+
+    }
 }

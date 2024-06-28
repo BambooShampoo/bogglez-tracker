@@ -1,11 +1,11 @@
 package ca.boggleztracker;
 
-import ca.boggleztracker.model.ProductManager;
+import ca.boggleztracker.model.ScenarioManager;
 import ca.boggleztracker.ui.TextUI;
 
 public class Main {
     public static void main(String[] args) {
-        ProductManager manager = new ProductManager();
+        ScenarioManager manager = new ScenarioManager();
         TextUI ui = new TextUI(manager);
 
         ui.start();
@@ -17,7 +17,7 @@ public class Main {
 //
 //    File Header:
 //    - Each class should start with a comment stating the file's name, revision history,
-//    and a description of the class's purpose.
+//      and a description of the class's purpose.
 //    - Example:
 //    /**
 //    * File: Student.java
@@ -59,16 +59,16 @@ public class Main {
 //    - Functions must start with a lower case letter, and use CamelCase
 //    - Classes must start with an upper case letter, and use CamelCase
 //
-//   Indentation and Braces:
-//   - Tab size is 4.
-//   - Opening braces is placed on the same line as the function, class, or control statement.
-//   closing braces is on its own line, lined up with the start of an opening enclosing statement
-//   - All if statements and loops should include braces around their statements.
+//    Indentation and Braces:
+//    - Tab size is 4.
+//    - Opening braces is placed on the same line as the function, class, or control statement.
+//      closing braces is on its own line, lined up with the start of an opening enclosing statement
+//    - All if statements and loops should include braces around their statements.
 //
-//   Statements and Spacing:
-//   - Each variable is declared in its own definition. (ex. do not write int i, j;)
-//   - All binary and ternary conditionals must be surrounded by one space.
-//   - Unary operators have no additional space
+//    Statements and Spacing:
+//    - Each variable is declared in its own definition. (ex. do not write int i, j;)
+//    - All binary and ternary conditionals must be surrounded by one space.
+//    - Unary operators have no additional space
 
 
 

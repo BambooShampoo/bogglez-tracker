@@ -10,4 +10,12 @@ public class ChangeItem {
     private String status;
     private LocalDate anticipatedReleaseDate;
     private List<ChangeRequest> requests = new ArrayList<>();
+
+    public List<ChangeRequest> getRequests() {
+        return requests;
+    }
+
+    public void addChangeRequest(LocalDate date, Requester requester) {
+        requests.add(new ChangeRequest(date, requester));
+    }
 }

@@ -10,4 +10,12 @@ public class Product {
     public Product(String productName) {
         this.productName = productName;
     }
+
+    public List<Release> getReleases() {
+        return releases;
+    }
+
+    public Release getSpecifedRelease(String releaseID) {
+
+    }
 }
