@@ -18,7 +18,7 @@ public class TextUI {
                 new TextMenu.MenuEntry("Issue.", this::issueMenu),
                 new TextMenu.MenuEntry("Product.", this::productMenu),
                 new TextMenu.MenuEntry("Reports.", this::reportsMenu),
-                new TextMenu.MenuEntry("Exit.", null)
+                new TextMenu.MenuEntry("Exit.", this::exitSystem)
         };
 
         boolean menuToRepeat = true;
@@ -65,4 +65,9 @@ public class TextUI {
     public void listChangeItems(Release release) {}
 
     public void listChangeRequests(ChangeItem change) {}
+
+    public void exitSystem() {
+        // manager.closeFile();
+        TextMenu.setShouldRepeat(false);
+    }
 }

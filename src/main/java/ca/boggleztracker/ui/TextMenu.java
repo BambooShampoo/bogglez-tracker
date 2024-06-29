@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class TextMenu {
     private String title;
-    private boolean shouldRepeat;
+    private static boolean shouldRepeat;
     private MenuEntry[] entries;
 
     // Utility class to bundle text string and menu action for each menu entry
@@ -36,6 +36,10 @@ public class TextMenu {
                 action.performAction();
             }
         } while (shouldRepeat);
+    }
+
+    public static void setShouldRepeat(boolean shouldRepeat) {
+        TextMenu.shouldRepeat = shouldRepeat;
     }
 
     public int getSelection() {

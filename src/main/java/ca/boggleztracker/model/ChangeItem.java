@@ -17,7 +17,9 @@ public class ChangeItem {
 
     private void generateRandomChangeID() {}
 
-    public List<ChangeRequest> getRequests() {}
+    public List<ChangeRequest> getRequests() {
+        return new ArrayList<ChangeRequest>();
+    }
 
     public void addChangeRequest(LocalDate date, Requester requester) {}
 }

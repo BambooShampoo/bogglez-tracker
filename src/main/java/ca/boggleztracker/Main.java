@@ -4,14 +4,15 @@ import ca.boggleztracker.model.ScenarioManager;
 import ca.boggleztracker.ui.TextUI;
 
 public class Main {
+    public static String FILE_PATH = "data.dat";
+
     public static void main(String[] args) {
-        ScenarioManager manager = new ScenarioManager();
+        ScenarioManager manager = new ScenarioManager(FILE_PATH);
         TextUI ui = new TextUI(manager);
 
         ui.start();
     }
 }
-
 
 //    Coding Conventions for ca.boggleztracker
 //
