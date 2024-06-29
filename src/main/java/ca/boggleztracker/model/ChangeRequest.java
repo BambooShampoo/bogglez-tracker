@@ -6,8 +6,5 @@ public class ChangeRequest {
     private LocalDate reportedDate;
     private Requester requester;
 
-    public ChangeRequest(LocalDate reportedDate, Requester requester) {
-        this.reportedDate = reportedDate;
-        this.requester = requester;
-    }
+    public ChangeRequest(LocalDate reportedDate, Requester requester) {}
 }

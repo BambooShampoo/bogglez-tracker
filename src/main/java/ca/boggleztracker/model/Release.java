@@ -9,16 +9,17 @@ public class Release {
     private LocalDate date;
     private List<ChangeItem> changes = new ArrayList<>();
 
-    public Release(String releaseID, LocalDate date) {
-        this.releaseID = releaseID;
-        this.date = date;
-    }
+    public Release(String releaseID, LocalDate date) {}
 
-    public List<ChangeItem> getChanges() {
-        return changes;
-    }
+    public List<ChangeItem> getChanges() {}
 
-    public ChangeItem getSpecifedChangeItem(int changeID) {
+    public ChangeItem getSpecifedChangeItem(int changeID) {}
 
-    }
+    public void addChangeItem(String status, int priority, LocalDate anticipatedReleaseDate) {}
+
+    public void updateRelease(LocalDate date) {}
+
+    public List<ChangeItem> filterAllPendingChanges() {}
+
+    public List<ChangeItem> filterAllCompletedChanges() {}
 }

@@ -1,9 +1,9 @@
 package ca.boggleztracker.ui;
 
 import ca.boggleztracker.model.ChangeItem;
-import ca.boggleztracker.model.ChangeRequest;
+import ca.boggleztracker.model.Release;
+import ca.boggleztracker.model.Product;
 import ca.boggleztracker.model.ScenarioManager;
-import org.w3c.dom.Text;
 
 public class TextUI {
     private final ScenarioManager manager;
@@ -34,61 +34,35 @@ public class TextUI {
         System.out.println("Issue Sub Menu");
     }
 
-    public void doCreateChangeRequest() {
-//        // list requesters
-//        listRequesters();
-//        Requester requester = manager.getSpecifiedRequester("email");
-//
-//        listProducts();
-//        Product product = manager.getSpecifiedProduct("product");
-//
-//        listReleases(product);
-//        // get user input
-//        Release release = product.getSpecifiedRelease("releaseID");
-//
-//        listChangeItems(release);
-//        // get user input for Changei
-//        ChangeItem change = release.getSpecifiedChange(1234231);
-//
-//        // inputs for change request, date
-//        change.addChangeRequest("date, requester");
-    }
+    public void doAddChangeRequest() {}
 
-    public void listRequesters() {
-//        manager.getRequesters();
-    }
+    public void doAddChangeItem(Release release) {}
 
-    public void listProducts() {
-
-    }
-
-    public void listReleases(Product product) {
-//        product.getReleases();
-
-        // for loop to list
-    }
-
-    public void listChangeItems(Release release) {
-//        release.getChanges();
-
-        //for loop to list
-    }
-
-    public void listChangeRequests(ChangeItem change) {
-//        change.getChangeRequest();
-
-        // for loop to lsit
-    }
-
-    public void doModifyIssue() { }
+    public void doModifyIssue() {}
 
     public void productMenu() {
         System.out.println("Product Sub Menu");
     }
 
+    public void doAddProduct() { }
+
+    public void doAddRelease() { }
+
     public void reportsMenu() {
         System.out.println("Reports Sub Menu");
     }
 
+    public void listPendingChanges() {}
 
+    public void listRequesterNotification() {}
+
+    public void listRequesters() {}
+
+    public void listProducts() {}
+
+    public void listReleases(Product product) {}
+
+    public void listChangeItems(Release release) {}
+
+    public void listChangeRequests(ChangeItem change) {}
 }

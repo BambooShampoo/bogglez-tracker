@@ -11,11 +11,13 @@ public class ChangeItem {
     private LocalDate anticipatedReleaseDate;
     private List<ChangeRequest> requests = new ArrayList<>();
 
-    public List<ChangeRequest> getRequests() {
-        return requests;
-    }
+    public ChangeItem(int priority, String status, LocalDate anticipatedReleaseDate) {}
 
-    public void addChangeRequest(LocalDate date, Requester requester) {
-        requests.add(new ChangeRequest(date, requester));
-    }
+    public void updateChangeItem(String status, int priority, LocalDate anticipatedReleaseDate) {}
+
+    private void generateRandomChangeID() {}
+
+    public List<ChangeRequest> getRequests() {}
+
+    public void addChangeRequest(LocalDate date, Requester requester) {}
 }

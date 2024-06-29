@@ -8,29 +8,19 @@ public class ScenarioManager implements Iterable<Product> {
     private List<Product> products = new ArrayList<>();
     private List<Requester> requesters = new ArrayList<>();
 
-    public List<Product> getProducts() {
-        return products;
-    }
+    public List<Product> getProducts() {}
 
-    public List<Requester> getRequesters() {
-        return requesters;
-    }
+    public List<Requester> getRequesters() {}
 
-    public boolean requesterExists(String email) {
-        return true;
-    }
+    public boolean requesterExists(String email) {}
 
-    public void addRequester(String email, String name, int phoneNumber, String department) {
-    }
+    public void addRequester(String email, String name, int phoneNumber, String department) {}
 
-    public Requester getSpecifiedRequester(Requester requester) { }
-        // select the requester
-        // or create new requester addRequester()
+    public void addProduct(String productName) {}
 
-    public Product getSpecifiedProduct(Product product) {
-        //
-        //user input
-    }
+    public Requester getSpecifiedRequester(Requester requester) {}
+
+    public Product getSpecifiedProduct(Product product) {}
 
     @Override
     public Iterator<Product> iterator() {
