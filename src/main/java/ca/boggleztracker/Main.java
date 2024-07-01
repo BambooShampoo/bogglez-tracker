@@ -1,11 +1,34 @@
+/**
+ * File: Main.java
+ * Revision History:
+ * - 2024-06-29: Function and variable declarations
+ * Purpose:
+ * Main class starts the bug tracker application. Data includes a static string
+ * variable storing the data file. The class is responsible for instantiating the
+ * manager and the user interface (UI). It uses dependency injection to pass a reference of the
+ * manager to the UI for improved modularity and flexibility.
+ */
 package ca.boggleztracker;
 
 import ca.boggleztracker.model.ScenarioManager;
 import ca.boggleztracker.ui.TextUI;
 
 public class Main {
+    //=============================
+    // Constants and Static Fields
+    //=============================
     public static String FILE_PATH = "data.dat";
 
+    //=============================
+    // Static Method Declarations
+    //=============================
+
+    //-----------------------------
+    /**
+     * System start up of the bug tracker application
+     * @param args (in) String[] - Command line arguments
+     */
+    //---
     public static void main(String[] args) {
         ScenarioManager manager = new ScenarioManager(FILE_PATH);
         TextUI ui = new TextUI(manager);
@@ -29,6 +52,9 @@ public class Main {
 //    * Student class models the information about university student. Data includes student name,
 //    * and address. It supports reading in file, and writing out to a file.
 //    */
+//
+//    "imports"
+//
 //    class Student {
 //        ...
 //    }
