@@ -14,16 +14,16 @@ public class ChangeRequest {
     //=============================
     // Member fields
     //=============================
+    private int changeID;
+    private String productName;
+    private String reportedRelease;
+    private String requesterEmail;
     private LocalDate reportedDate;
-    private Requester requester;
 
     //-----------------------------
     /**
-     * Two argument constructor for ChangeRequest
      *
-     * @param reportedDate (in) LocalDate - Date of reported issue.
-     * @param requester (in) Requester - The requester who reported the change request.
      */
     //---
-    public ChangeRequest(LocalDate reportedDate, Requester requester) {}
+    public ChangeRequest(int changeID, String productName, String reportedRelease, String requesterEmail, LocalDate reportedDate) {}
 }

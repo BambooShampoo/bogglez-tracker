@@ -15,11 +15,6 @@ import ca.boggleztracker.ui.TextUI;
 
 public class Main {
     //=============================
-    // Constants and Static Fields
-    //=============================
-    public static String FILE_PATH = "data.dat";
-
-    //=============================
     // Static Method Declarations
     //=============================
 
@@ -30,7 +25,7 @@ public class Main {
      */
     //---
     public static void main(String[] args) {
-        ScenarioManager manager = new ScenarioManager(FILE_PATH);
+        ScenarioManager manager = new ScenarioManager();
         TextUI ui = new TextUI(manager);
 
         ui.start();

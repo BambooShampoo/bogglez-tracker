@@ -9,19 +9,19 @@
  */
 package ca.boggleztracker.model;
 
+import java.io.RandomAccessFile;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ChangeItem {
     //=============================
     // Member fields
     //=============================
     private int changeID;
+    private String releaseID;
+    private String changeDescription;
     private int priority;
     private String status;
     private LocalDate anticipatedReleaseDate;
-    private List<ChangeRequest> requests = new ArrayList<>();
 
     //=============================
     // Constructors
@@ -51,35 +51,5 @@ public class ChangeItem {
     //---
     private void generateRandomChangeID() {}
 
-    //-----------------------------
-    /**
-     * Updates the status, priority, and anticipated release date of change item.
-     *
-     * @param status (in) String - New status of change item.
-     * @param priority (in) int - New priority of change item.
-     * @param anticipatedReleaseDate (in) LocalDate - New anticipated or actual release date of change item.
-     */
-    //---
-    public void updateChangeItem(String status, int priority, LocalDate anticipatedReleaseDate) {}
-
-    //-----------------------------
-    /**
-     * Getter method for accessing the list of change requests.
-     *
-     * @return (out) List - Reference to the change requests array list.
-     */
-    //---
-    public List<ChangeRequest> getRequests() {
-        return new ArrayList<ChangeRequest>();
-    }
-
-    //-----------------------------
-    /**
-     * Adds a new change request to the array list.
-     *
-     * @param date (in) LocalDate - Current date of the reported change request.
-     * @param requester (in) Requester - Reference to the requester of reported request.
-     */
-    //---
-    public void addChangeRequest(LocalDate date, Requester requester) {}
+    public void readChangeItems(RandomAccessFile file) {}
 }

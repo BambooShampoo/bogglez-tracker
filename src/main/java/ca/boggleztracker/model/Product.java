@@ -2,6 +2,7 @@
  * File: Product.java
  * Revision History:
  * - 2024-06-29: Function and variable declarations
+ * - 2024-07-02: System redesign remove storing records into RAM
  * Purpose:
  * Product class represents a product in the system and is responsible for
  * managing the releases of the product. The class stores data such as product name
@@ -9,16 +10,13 @@
  */
 package ca.boggleztracker.model;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.RandomAccessFile;
 
 public class Product {
     //=============================
     // Member fields
     //=============================
     private String productName;
-    private List<Release> releases = new ArrayList<>();
 
     //=============================
     // Constructors
@@ -39,56 +37,12 @@ public class Product {
 
     //-----------------------------
     /**
-     * Getter method for accessing the list of releases
+     * Writes the contents of release object to the release file.
      *
-     * @return (out) List - Reference to the releases array list.
+     * @param file (in) RandomAccessFile - The file to read from.
      */
     //---
-    public List<Release> getReleases() {
-        return new ArrayList<Release>();
-    }
+    public void writeProduct(RandomAccessFile file) {}
 
-    //-----------------------------
-    /**
-     * Retrieves a specific release based on the number displayed on UI.
-     *
-     * @param number (in) int - Position of the release in the displayed list.
-     * @return (out) Release - Release object at the specified position.
-     */
-    //---
-    public Release getSpecifedRelease(int number) {
-        return new Release("", LocalDate.of(2020, 1, 8));
-    }
-
-    //-----------------------------
-    /**
-     * Adds a new release version of product to the array list.
-     *
-     * @param releaseID (in) String - ID of the new release.
-     * @param date (in) LocalDate - Release date of the new release.
-     */
-    //---
-    public void addRelease(String releaseID, LocalDate date) {}
-
-    //-----------------------------
-    /**
-     * Retrieves the list of all pending changes of the product.
-     *
-     * @return (out) List - ArrayList of ChangeItem objects with pending changes.
-     */
-    //---
-    public List<ChangeItem> getListPendingChanges() {
-        return new ArrayList<ChangeItem>();
-    }
-
-    //-----------------------------
-    /**
-     * Retrieves the list of all completed change items of the product.
-     *
-     * @return (out) List - ArrayList of ChangeItem objects with completed changes.
-     */
-    //---
-    public List<ChangeItem> getListCompletedChanges() {
-        return new ArrayList<ChangeItem>();
-    }
+    public void readProduct(RandomAccessFile file) {}
 }

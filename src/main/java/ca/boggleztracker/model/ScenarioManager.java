@@ -2,6 +2,7 @@
  * File: ScenarioManager.java
  * Revision History:
  * - 2024-06-29: Function and variable declarations
+ * - 2024-07-02: System redesign remove storing records into RAM
  * Purpose:
  * ScenarioManager class is responsible for opening and closing the data file,
  * populating the array lists of products and requesters, and supports various interactions
@@ -11,30 +12,22 @@
 package ca.boggleztracker.model;
 
 import java.io.RandomAccessFile;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
 
 public class ScenarioManager {
     //=============================
+    // Constants and static fields
+    //=============================
+    private static final String REQUESTER_FILE = "requester.dat";
+    private static final String PRODUCT_FILE = "product.dat";
+    private static final String RELEASE_FILE = "release.dat";
+    private static final String CHANGE_ITEM_FILE = "change_item.dat";
+    private static final String CHANGE_REQUEST_FILE = "change-request.dat";
+
+    //=============================
     // Member fields
     //=============================
-    private List<Product> products = new ArrayList<>();
-    private List<Requester> requesters = new ArrayList<>();
     private RandomAccessFile file;
-
-    //=============================
-    // Constructors
-    //=============================
-
-    //-----------------------------
-
-    /**
-     * One argument constructor for ScenarioManager.
-     *
-     * @param filePath (in) String - Path of the file to read/write data.
-     */
-    //---
-    public ScenarioManager(String filePath) {}
 
     //=============================
     // Methods
@@ -42,41 +35,13 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
-     * Utility method to open the file and parse its data to populate products and requesters,
-     * and any other relevant data.
-     */
-    //---
-    public void populateFromFile() {}
-
-    //-----------------------------
-    /**
-     * Getter method for product array list.
-     */
-    //---
-    public List<Product> getProducts() {
-        return new ArrayList<Product>();
-    }
-
-    //-----------------------------
-    /**
-     * Getter method to array for requester array list.
-     */
-    //---
-    public List<Requester> getRequesters() {
-        return new ArrayList<Requester>();
-    }
-
-    //-----------------------------
-    /**
-     * Checks if requester already exists in system when creating a new requester.
+     * Opens the specified file for reading and writing.
      *
-     * @param email (in) String - email of specified requester to check
-     * @return (out) boolean - true if requester with given email exists, false otherwise.
+     * @param fileName (in) String - Name of the file to open.
+     * @param mode (in) String - Access mode.
      */
     //---
-    public boolean requesterExists(String email) {
-        return true;
-    }
+    public void openFile(String fileName, String mode) {}
 
     //-----------------------------
     /**
@@ -100,28 +65,30 @@ public class ScenarioManager {
     public void addProduct(String productName) {}
 
     //-----------------------------
-    /**
-     * Retrieves a specific requester based on the number displayed on UI.
-     *
-     * @param number (in) int - Position of the requester in displayed list.
-     * @return (out) Requester - Requester object at the specified position.
-     */
+
     //---
-    public Requester getSpecifiedRequester(int number) {
-        return new Requester("", "", 1, "");
+    public void addRequest(int changeID, String productName, String reportedRelease, String requesterEmail, LocalDate reportedDate) {}
+
+    // return string of entire page
+
+    //return position on page
+    public String getFileRequesters(int page, int pageSize) {
+        return "";
     }
 
-    //-----------------------------
-    /**
-     * Retrieves a specific product based on number on list displayed.
-     *
-     * @param number (in) int - Position of the product in displayed list.
-     * @return (out) Product - Product object at the specified position.
-     */
-    //---
-    public Product getSpecifiedProduct(int number) {
-        return new Product("");
+    public String getFileProducts(int page, int pageSize) {
+        return "";
     }
+
+    public String getFileReleases(int page, int pageSize) {
+        return "";
+    }
+
+    public int getFileChangeItems(int page, int pageSize) {
+        return 0;
+    }
+
+
 
     //-----------------------------
     /**

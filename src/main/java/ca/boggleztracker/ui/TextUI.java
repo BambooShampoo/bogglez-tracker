@@ -2,6 +2,7 @@
  * File: TextUI.java
  * Revision History:
  * - 2024-06-29: Function and variable declarations
+ * - 2024-07-02: System redesign remove storing records into RAM
  * Purpose:
  * TextUI class is responsible for managing the user interface (UI) of the bug tracker
  * application. The class creates TextMenu objects and handles the different
@@ -10,9 +11,7 @@
  */
 package ca.boggleztracker.ui;
 
-import ca.boggleztracker.model.ChangeItem;
-import ca.boggleztracker.model.Release;
-import ca.boggleztracker.model.Product;
+import ca.boggleztracker.model.ChangeRequest;
 import ca.boggleztracker.model.ScenarioManager;
 
 public class TextUI {
@@ -76,7 +75,7 @@ public class TextUI {
      * from the customer, the system will check if it already exists.
      */
     //---
-    public void doAddRequester() { }
+    public void doAddRequester() {}
 
     //-----------------------------
     /**
@@ -97,11 +96,10 @@ public class TextUI {
     //-----------------------------
 
     /**
-     * Provides the user interactions to add a change item within its specified release id.
-     * @param release (in) Release - Specified product release to which the change item will be added.
+     * Provides the user interactions to add a change item.
      */
     //---
-    public void doAddChangeItem(Release release) {}
+    public void doAddChangeItem() {}
 
     //-----------------------------
     /**
@@ -159,38 +157,40 @@ public class TextUI {
 
     //-----------------------------
     /**
-     * Displays a list of requesters.
+     * Displays a list of requesters and retrieves requester email
      */
     //---
-    public void listRequesters() {}
+    public String selectRequester() {
+
+        return "";
+    }
 
     //-----------------------------
     /**
-     * Displays a list of products.
+     * Displays a list of products and returns selected product name.
      */
     //---
-    public void listProducts() {}
+    public String selectProduct() {
+        return "";
+    }
 
     //-----------------------------
     /**
-     * Displays a list of product releases based on provided product.
+     * Displays a list of product releases based on provided product and returns selected release.
      */
     //---
-    public void listReleases(Product product) {}
+    public String selectRelease(String productName) {
+        return "";
+    }
 
     //-----------------------------
     /**
-     * Displays a list of change items based on provided release.
+     * Displays a list of change items based on provided release and returns changeID.
      */
     //---
-    public void listChangeItems(Release release) {}
-
-    //-----------------------------
-    /**
-     * Displays a list of change requests based on provided change item.
-     */
-    //---
-    public void listChangeRequests(ChangeItem change) {}
+    public int selectChangeItem(String releaseID) {
+        return 0;
+    }
 
     //-----------------------------
     /**
