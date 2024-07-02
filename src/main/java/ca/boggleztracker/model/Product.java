@@ -44,5 +44,14 @@ public class Product {
     //---
     public void writeProduct(RandomAccessFile file) {}
 
+    //-----------------------------
+    /**
+     * Checks file to see if email already exists.
+     *
+     * @param file (in) RandomAccessFile - The file to read from.
+     * @param productName (in) String - The product name is checked.
+     */
+    //---
+    public static boolean productExists(RandomAccessFile file, String productName) { return false; }
     public void readProduct(RandomAccessFile file) {}
 }

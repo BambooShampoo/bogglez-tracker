@@ -160,10 +160,7 @@ public class TextUI {
      * Displays a list of requesters and retrieves requester email
      */
     //---
-    public String selectRequester() {
-
-        return "";
-    }
+    public String selectRequester() { return ""; }
 
     //-----------------------------
     /**

@@ -39,5 +39,26 @@ public class Release {
     // Methods
     //=============================
 
+    //-----------------------------
+    /**
+     * Writes the contents of release object to the release file.
+     *
+     * @param file (in) RandomAccessFile - The file to read from.
+     */
+    //---
+    public void writeProduct(RandomAccessFile file) {}
+
+    //-----------------------------
+    /**
+     * Checks file to see if an exact permutation of the three ProductRelease parameters already exists.
+     *
+     * @param file (in) RandomAccessFile - The file to read from.
+     * @param productName (in) String - Product name of release version.
+     * @param releaseID (in) String - ID of the release version.
+     * @param date (in) LocalDate - Date of the release.
+     */
+    //---
+    public static boolean productReleaseExists(RandomAccessFile file, String productName, String releaseID, LocalDate date) { return false; }
+
     public void readRelease(RandomAccessFile file) {}
 }

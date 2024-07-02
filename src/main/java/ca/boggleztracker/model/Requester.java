@@ -42,7 +42,7 @@ public class Requester {
 
     //-----------------------------
     /**
-     * Writes the contents of release object to the release file.
+     * Writes the contents of Request object to the Request file.
      *
      * @param file (in) RandomAccessFile - The file to read from.
      */
@@ -59,6 +59,12 @@ public class Requester {
     //---
     public static boolean requesterExists(RandomAccessFile file, String email) { return false; }
 
-
+    //-----------------------------
+    /**
+     * reads the contents of Request object to the Request file.
+     *
+     * @param file (in) RandomAccessFile - The file to read from.
+     */
+    //---
     public void readRequester(RandomAccessFile file) {}
 }
