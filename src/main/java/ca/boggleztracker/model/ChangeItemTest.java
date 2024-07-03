@@ -49,8 +49,7 @@ class ChangeItemTest {
         try {
             RandomAccessFile myFile = new RandomAccessFile(filename, "rw");
             changeItem.writeChangeItem(myFile);
-        }
-        catch(FileNotFoundException e) {
+        } catch(FileNotFoundException e) {
             System.out.println("File not found\n");
         }
     }
@@ -66,8 +65,7 @@ class ChangeItemTest {
         try {
             RandomAccessFile myFile = new RandomAccessFile(filename, "r");
             changeItem.readChangeItems(myFile);
-        }
-        catch(FileNotFoundException e) {
+        } catch(FileNotFoundException e) {
             System.out.println("File not found");
         }
     }
@@ -83,8 +81,7 @@ class ChangeItemTest {
         try {
             RandomAccessFile myFile = new RandomAccessFile(filename, "r");
             changeItem.changeItemExists(myFile, priority, status, anticipatedReleaseDate);
-        }
-        catch(FileNotFoundException e) {
+        } catch(FileNotFoundException e) {
             System.out.println("File not found");
         }
     }
