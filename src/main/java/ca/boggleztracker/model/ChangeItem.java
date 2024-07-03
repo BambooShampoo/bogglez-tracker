@@ -51,5 +51,26 @@ public class ChangeItem {
     //---
     private void generateRandomChangeID() {}
 
+    //-----------------------------
+    /**
+     * Writes the contents of release object to the release file.
+     *
+     * @param file (in) RandomAccessFile - The file to read from.
+     */
+    //---
+    public void writeChangeItem(RandomAccessFile file) {}
+    //-----------------------------
+    /**
+     * Checks file to see if exact permutation of the 3 ChangeItem parameters already exists.
+     *
+     * @param file (in) RandomAccessFile - The file to read from.
+     * @param priority (in) int - Priority of the change item (1 - 5)
+     * @param status (in) String - status of the change item
+     *               (Open, Assessed, In Progress, Completed, Cancelled).
+     * @param anticipatedReleaseDate - Anticipated release date of the change item.
+     */
+    //---
+    public static boolean changeItemExists(RandomAccessFile file, int priority, String status, LocalDate anticipatedReleaseDate) { return false; }
+
     public void readChangeItems(RandomAccessFile file) {}
 }
