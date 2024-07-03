@@ -101,4 +101,7 @@ public class ChangeItem {
      */
     //---
     public void readChangeItems(RandomAccessFile file) {}
+
+    @Override
+    public String toString() {return null;}
 }
