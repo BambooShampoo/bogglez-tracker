@@ -3,6 +3,7 @@
  * Revision History:
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-02: System redesign remove storing records into RAM
+ * - 2024-07-03: Added toString() method for printing
  * Purpose:
  * ChangeItem class represents a change item of a particular product release and is responsible for
  * managing the change requests of the change item. The class stores data such as changeID, priority
@@ -101,6 +102,8 @@ public class ChangeItem {
      */
     //---
     public void readChangeItems(RandomAccessFile file) {}
+
+    //---
 
     @Override
     public String toString() {return null;}
