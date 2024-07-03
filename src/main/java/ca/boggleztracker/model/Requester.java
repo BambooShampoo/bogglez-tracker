@@ -61,7 +61,7 @@ public class Requester {
 
     //-----------------------------
     /**
-     * reads the contents of Request object to the Request file.
+     * Reads individual requester record from file
      *
      * @param file (in) RandomAccessFile - The file to read from.
      */

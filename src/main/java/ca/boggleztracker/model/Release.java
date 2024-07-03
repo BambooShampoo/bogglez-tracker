@@ -2,6 +2,7 @@
  * File: Release.java
  * Revision History:
  * - 2024-06-29: Function and variable declarations
+ * - 2024-07-02: System redesign remove storing records into RAM
  * Purpose:
  * Release class represents a release of a product in the system and is responsible for
  * managing the change items of the release. The class stores data such as release ID,
@@ -46,7 +47,7 @@ public class Release {
      * @param file (in) RandomAccessFile - The file to read from.
      */
     //---
-    public void writeProduct(RandomAccessFile file) {}
+    public void writeRelease(RandomAccessFile file) {}
 
     //-----------------------------
     /**
@@ -58,7 +59,14 @@ public class Release {
      * @param date (in) LocalDate - Date of the release.
      */
     //---
-    public static boolean productReleaseExists(RandomAccessFile file, String productName, String releaseID, LocalDate date) { return false; }
+    public static boolean releaseExists(RandomAccessFile file, String productName, String releaseID, LocalDate date) { return false; }
 
+    //-----------------------------
+    /**
+     * Reads individual release record from file
+     *
+     * @param file (in) RandomAccessFile - The file to read from.
+     */
+    //---
     public void readRelease(RandomAccessFile file) {}
 }

@@ -131,6 +131,14 @@ public class TextUI {
     //---
     public void doAddRelease() { }
 
+
+    //-----------------------------
+    /**
+     * Provides the user interactions to modify a release.
+     */
+    //---
+    public void doModifyRelease() {}
+
     //-----------------------------
     /**
      * Use the TextMenu class to create a reports menu and manage interactions.
@@ -145,7 +153,10 @@ public class TextUI {
      * Provides the user interaction to display report of all pending change items for a product.
      */
     //---
-    public void listPendingChanges() {}
+    public void listPendingChanges() {
+        String product = selectProduct();
+
+    }
 
     //-----------------------------
     /**

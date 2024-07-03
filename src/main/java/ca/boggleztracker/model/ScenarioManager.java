@@ -45,7 +45,7 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
-     * Adds a new requester to the array list.
+     * Adds a new requester to file.
      *
      * @param email (in) String - Email of new requester.
      * @param name (in) String - Name of new requester.
@@ -57,7 +57,7 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
-     * Adds a new product to the array list.
+     * Adds a new product to file.
      *
      * @param productName (in) String - Name of the new product.
      */
@@ -66,16 +66,57 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
-     * Adds a new Request to the array list.
+     * Adds a new request to the file.
      *
-     * @param changeID (in) int - Identifier for the ChangeItem this request is for.
+     * @param changeID (in) int - Identifier of the ChangeItem this request is for.
      * @param productName (in) String - Name of product of change request.
      * @param reportedRelease (in) String - Release version of the product
      * @param requesterEmail (in) String - Email of the requester.
      * @param reportedDate (in) LocalDate - Date of when the request was made.
      */
     //---
-    public void addRequest(int changeID, String productName, String reportedRelease, String requesterEmail, LocalDate reportedDate) {}
+    public void addChangeRequest(int changeID, String productName, String reportedRelease,
+                                 String requesterEmail, LocalDate reportedDate) {}
+
+    /**
+     * Adds a new change item to the file.
+     *
+     * @param releaseID (in) int - Identifier of the release this change item is for.
+     * @param productName (in) String - Product name of reported change item.
+     * @param changeDescription (in) String - Change description of change.
+     * @param priority (in) int - Priority of the change.
+     * @param status (in) String - Status of the change.
+     * @param anticipatedReleaseDate (in) LocalDate - Date of anticipated release date.
+     */
+    public void addChangeItem(String releaseID, String productName, String changeDescription, int priority,
+                              String status, LocalDate anticipatedReleaseDate) {}
+
+    /**
+     * Modifies a specific change item in the file.
+     *
+     * @param changeID (in) int - Change ID reference to be searched in file.
+     * @param modifiedChangeItem (in) ChangeItem - The new modified change item to be written
+     *                          into file.
+     */
+    public void modifyChangeItem(int changeID, ChangeItem modifiedChangeItem) {}
+
+    /**
+     * Modifies a specific release in the file.
+     *
+     * @param releaseID (in) String - Release ID reference to be searched in file.
+     * @param modifiedRelease (in) Release - The new modified release to be written into file.
+     */
+    public void modifyRelease(String releaseID, Release modifiedRelease) {}
+
+    /**
+     * Adds a new release to the file.
+     *
+     * @param productName (in) String - Identifier of the product this release is for.
+     * @param releaseID (in) String - Identifier for the release
+     * @param date (in) LocalDate - Date of release
+     */
+    public void addRelease(String productName, String releaseID, LocalDate date) {}
+
 
     //-----------------------------
     /**
@@ -85,7 +126,7 @@ public class ScenarioManager {
      * @param pageSize (in) int - How many items of data each page can hold.
      */
     //---
-    public String getFileRequesters(int page, int pageSize) {
+    public String generateRequesterPage(int page, int pageSize) {
         return "";
     }
 
@@ -97,7 +138,7 @@ public class ScenarioManager {
      * @param pageSize (in) int - How many items of data each page can hold.
      */
     //---
-    public String getFileProducts(int page, int pageSize) {
+    public String generateProductPage(int page, int pageSize) {
         return "";
     }
 
@@ -109,7 +150,7 @@ public class ScenarioManager {
      * @param pageSize (in) int - How many items of data each page can hold.
      */
     //---
-    public String getFileReleases(int page, int pageSize) {
+    public String generateReleasePage(int page, int pageSize) {
         return "";
     }
 
@@ -121,8 +162,28 @@ public class ScenarioManager {
      * @param pageSize (in) int - How many items of data each page can hold.
      */
     //---
-    public int getFileChangeItems(int page, int pageSize) {
-        return 0;
+    public String generateChangeItemPage(int page, int pageSize) {
+        return "";
+    }
+
+    //-----------------------------
+    /**
+     * Gets a list of all pending change items of a specific product.
+     *
+     * @param productName (in) String - Product name reference to find all pending changes.
+     */
+    //---
+    public String generatePendingChangesPage(String productName) {
+        return "";
+    }
+
+    //-----------------------------
+    /**
+     * Gets a list of all completed changes for customer notification.
+     */
+    //---
+    public String generateCompletedChangesPage() {
+        return "";
     }
 
     //-----------------------------

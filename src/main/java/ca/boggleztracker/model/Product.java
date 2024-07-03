@@ -53,5 +53,13 @@ public class Product {
      */
     //---
     public static boolean productExists(RandomAccessFile file, String productName) { return false; }
+
+    //-----------------------------
+    /**
+     * Reads individual product record from file
+     *
+     * @param file (in) RandomAccessFile - The file to read from.
+     */
+    //---
     public void readProduct(RandomAccessFile file) {}
 }

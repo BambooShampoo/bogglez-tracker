@@ -2,6 +2,7 @@
  * File: ChangeRequest.java
  * Revision History:
  * - 2024-06-29: Function and variable declarations
+ * - 2024-07-02: System redesign remove storing records into RAM
  * Purpose:
  * ChangeRequest class represents a change request of a product, storing data such as
  * reported date and the requester.
@@ -32,7 +33,8 @@ public class ChangeRequest {
      * @param reportedDate (in) LocalDate - Date of when the request was made.
      */
     //---
-    public ChangeRequest(int changeID, String productName, String reportedRelease, String requesterEmail, LocalDate reportedDate) {}
+    public ChangeRequest(int changeID, String productName, String reportedRelease,
+                         String requesterEmail, LocalDate reportedDate) {}
 
     //-----------------------------
     /**
@@ -55,5 +57,8 @@ public class ChangeRequest {
      * @param reportedDate (in) LocalDate - Date of when the request was made.
      */
     //---
-    public static boolean changeRequestExists(RandomAccessFile file, int changeID, String productName, String reportedRelease, String requesterEmail, LocalDate reportedDate) { return false; }
+    public static boolean changeRequestExists(RandomAccessFile file, int changeID, String productName,
+                                              String reportedRelease, String requesterEmail, LocalDate reportedDate) {
+        return false;
+    }
 }
