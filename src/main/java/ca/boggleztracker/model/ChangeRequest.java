@@ -61,4 +61,12 @@ public class ChangeRequest {
                                               String reportedRelease, String requesterEmail, LocalDate reportedDate) {
         return false;
     }
+
+    /**
+     * Reads individual change request record from file
+     *
+     * @param file (in) RandomAccessFile - The file to read from.
+     */
+    //---
+    public void readChangeRequest(RandomAccessFile file) {}
 }
