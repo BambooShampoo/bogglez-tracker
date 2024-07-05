@@ -13,6 +13,8 @@ package ca.boggleztracker;
 import ca.boggleztracker.model.ScenarioManager;
 import ca.boggleztracker.ui.TextUI;
 
+import java.io.IOException;
+
 public class Main {
     //=============================
     // Static Method Declarations
@@ -25,10 +27,15 @@ public class Main {
      */
     //---
     public static void main(String[] args) {
-        ScenarioManager manager = new ScenarioManager();
-        TextUI ui = new TextUI(manager);
+        try {
+            ScenarioManager manager = new ScenarioManager();
+            TextUI ui = new TextUI(manager);
 
-        ui.start();
+            //ui.start();
+            manager.addProduct("PRODUCT 1");
+        } catch (IOException e) {
+            System.err.println("Error opening record files " + e.getMessage());
+        }
     }
 }
 

@@ -3,6 +3,7 @@
  * Revision History:
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-02: System redesign remove storing records into RAM
+ * - 2024-07-04: Created individual RandomAccessFiles for each file, opened on start and closed on system shut down.
  * Purpose:
  * ScenarioManager class is responsible for opening and closing the data file,
  * populating the array lists of products and requesters, and supports various interactions
@@ -11,6 +12,7 @@
 
 package ca.boggleztracker.model;
 
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
 
@@ -27,21 +29,26 @@ public class ScenarioManager {
     //=============================
     // Member fields
     //=============================
-    private RandomAccessFile file;
+    private RandomAccessFile requesterFile;
+    private RandomAccessFile productFile;
+    private RandomAccessFile releaseFile;
+    private RandomAccessFile changeItemFile;
+    private RandomAccessFile changeRequestFile;
+
+    //=============================
+    // Constructor
+    //=============================
+    public ScenarioManager() throws IOException {
+        requesterFile = new RandomAccessFile(REQUESTER_FILE, "rw");
+        productFile = new RandomAccessFile(PRODUCT_FILE, "rw");
+        releaseFile = new RandomAccessFile(RELEASE_FILE, "rw");
+        changeItemFile = new RandomAccessFile(CHANGE_ITEM_FILE, "rw");
+        changeRequestFile = new RandomAccessFile(CHANGE_REQUEST_FILE, "rw");
+    }
 
     //=============================
     // Methods
     //=============================
-
-    //-----------------------------
-    /**
-     * Opens the specified file for reading and writing.
-     *
-     * @param fileName (in) String - Name of the file to open.
-     * @param mode (in) String - Access mode.
-     */
-    //---
-    public void openFile(String fileName, String mode) {}
 
     //-----------------------------
     /**
@@ -62,7 +69,14 @@ public class ScenarioManager {
      * @param productName (in) String - Name of the new product.
      */
     //---
-    public void addProduct(String productName) {}
+    public void addProduct(String productName) {
+        Product product = new Product(productName);
+        try {
+            product.writeProduct(productFile);
+        } catch (IOException e) {
+            System.err.println("Error writing product to file " + e.getMessage());
+        }
+    }
 
     //-----------------------------
     /**
@@ -191,5 +205,11 @@ public class ScenarioManager {
      * Closes the file, on system shut down
      */
     //---
-    public void closeFile() {}
+    public void closeFiles() {
+        try {
+            requesterFile.close();
+        } catch (IOException e) {
+            System.err.println("Error closing files " + e.getMessage());
+        }
+    }
 }
