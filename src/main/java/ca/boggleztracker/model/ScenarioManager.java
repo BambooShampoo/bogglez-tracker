@@ -23,7 +23,7 @@ public class ScenarioManager {
     private static final String REQUESTER_FILE = "requester.dat";
     private static final String PRODUCT_FILE = "product.dat";
     private static final String RELEASE_FILE = "release.dat";
-    private static final String CHANGE_ITEM_FILE = "change_item.dat";
+    private static final String CHANGE_ITEM_FILE = "change-item.dat";
     private static final String CHANGE_REQUEST_FILE = "change-request.dat";
 
     //=============================
@@ -52,6 +52,36 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
+     * Helper function to pad character array with spaces to ensure
+     * it's of desired length.
+     *
+     * @param charArray (in) char[] - character array to pad.
+     * @param padLength (in) int - length of new character array.
+     * @return (out) char[] - character array with padded spaces.
+     */
+    public static char[] padCharArray(char[] charArray, int padLength) {
+        char[] temp = new char[padLength];
+
+        if (charArray.length > padLength) {
+            for (int i = 0; i < charArray.length; i++) {
+                temp[i] = charArray[i];
+            }
+        } else {
+            // Copy all characters from productName
+            for (int i = 0; i < charArray.length; i++) {
+                temp[i] = charArray[i];
+            }
+
+            // Pad with spaces to max length
+            for (int i = charArray.length; i < padLength; i++) {
+                temp[i] = ' ';
+            }
+        }
+        return temp;
+    }
+
+    //-----------------------------
+    /**
      * Adds a new requester to file.
      *
      * @param email (in) String - Email of new requester.
@@ -60,7 +90,14 @@ public class ScenarioManager {
      * @param department (in) String - Department of new requester. This can be left as empty.
      */
     //---
-    public void addRequester(String email, String name, int phoneNumber, String department) {}
+    public void addRequester(String email, String name, long phoneNumber, String department) {
+        Requester requester = new Requester(email, name, phoneNumber, department);
+        try {
+            requester.writeRequester(requesterFile);
+        } catch (IOException e) {
+            System.err.println("Error writing requester to file " + e.getMessage());
+        }
+    }
 
     //-----------------------------
     /**
@@ -90,7 +127,15 @@ public class ScenarioManager {
      */
     //---
     public void addChangeRequest(int changeID, String productName, String reportedRelease,
-                                 String requesterEmail, LocalDate reportedDate) {}
+                                 String requesterEmail, LocalDate reportedDate) {
+        ChangeRequest changeRequest = new ChangeRequest(changeID, productName,
+                reportedRelease, requesterEmail, reportedDate);
+        try {
+            changeRequest.writeChangeRequest(changeRequestFile);
+        } catch (IOException e) {
+            System.err.println("Error writing product to file " + e.getMessage());
+        }
+    }
 
     /**
      * Adds a new change item to the file.
@@ -102,8 +147,16 @@ public class ScenarioManager {
      * @param status (in) String - Status of the change.
      * @param anticipatedReleaseDate (in) LocalDate - Date of anticipated release date.
      */
-    public void addChangeItem(String releaseID, String productName, String changeDescription, int priority,
-                              String status, LocalDate anticipatedReleaseDate) {}
+    public void addChangeItem(String productName, String releaseID, String changeDescription, int priority,
+                              String status, LocalDate anticipatedReleaseDate) {
+        ChangeItem changeItem = new ChangeItem(productName, releaseID, changeDescription,
+                priority, status, anticipatedReleaseDate);
+        try {
+            changeItem.writeChangeItem(changeItemFile);
+        } catch (IOException e) {
+            System.err.println("Error writing change item to file " + e.getMessage());
+        }
+    }
 
     /**
      * Modifies a specific change item in the file.
@@ -129,8 +182,14 @@ public class ScenarioManager {
      * @param releaseID (in) String - Identifier for the release
      * @param date (in) LocalDate - Date of release
      */
-    public void addRelease(String productName, String releaseID, LocalDate date) {}
-
+    public void addRelease(String productName, String releaseID, LocalDate date) {
+        Release release = new Release(productName, releaseID, date);
+        try {
+            release.writeRelease(releaseFile);
+        } catch (IOException e) {
+            System.err.println("Error writing release to file " + e.getMessage());
+        }
+    }
 
     //-----------------------------
     /**

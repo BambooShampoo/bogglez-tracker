@@ -14,6 +14,7 @@ import ca.boggleztracker.model.ScenarioManager;
 import ca.boggleztracker.ui.TextUI;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class Main {
     //=============================
@@ -32,7 +33,13 @@ public class Main {
             TextUI ui = new TextUI(manager);
 
             //ui.start();
-            manager.addProduct("PRODUCT 1");
+            manager.addProduct("BOGGLEZ");
+            manager.addRelease("BOGGLEZ", "v1.0", LocalDate.of(2024, 7, 6));
+            manager.addRequester("edc@gmail.com", "emmanuel", 16045123258L, "QA");
+            manager.addChangeItem("BOGGLEZ", "v1.0", "Error on search bar", 5, "Open", LocalDate.of(2024, 7, 6));
+            manager.addChangeRequest(1, "BOGGLEZ", "v1.0", "abc@gmail.com", LocalDate.of(2024, 7, 6));
+
+            manager.closeFiles();
         } catch (IOException e) {
             System.err.println("Error opening record files " + e.getMessage());
         }

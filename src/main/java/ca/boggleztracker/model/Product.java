@@ -16,7 +16,7 @@ import java.io.RandomAccessFile;
 
 public class Product {
     //=============================
-    // Static fields
+    // Constants and static fields
     //=============================
     public static final int MAX_PRODUCT_NAME = 10;
     public static final int SIZE = MAX_PRODUCT_NAME * 2;
@@ -38,41 +38,12 @@ public class Product {
      */
     //---
     public Product(String productName) {
-        this.productName = padProductName(productName.toCharArray(), MAX_PRODUCT_NAME);
+        this.productName = ScenarioManager.padCharArray(productName.toCharArray(), MAX_PRODUCT_NAME);
     }
 
     //=============================
     // Methods
     //=============================
-
-    /**
-     * Helper function to pad product name with spaces to ensure
-     * it's of desired length.
-     *
-     * @param productName (in) char[] - character array to pad.
-     * @param padLength (in) int - length of new character array.
-     * @return (out) char[] - product name with padded spaces.
-     */
-    public char[] padProductName(char[] productName, int padLength) {
-        char[] temp = new char[padLength];
-
-        if (productName.length > padLength) {
-            for (int i = 0; i < padLength; i++) {
-                temp[i] = productName[i];
-            }
-        } else {
-            // Copy all characters from productName
-            for (int i = 0; i < productName.length; i++) {
-                temp[i] = productName[i];
-            }
-
-            // Pad with spaces to max length
-            for (int i = productName.length; i < padLength; i++) {
-                temp[i] = ' ';
-            }
-        }
-        return temp;
-    }
 
     //-----------------------------
     /**
@@ -83,6 +54,7 @@ public class Product {
     //---
     public void writeProduct(RandomAccessFile file) throws IOException {
         file.writeChars(new String(productName));
+        System.out.println("Product: " + file.length());
     }
 
     //-----------------------------

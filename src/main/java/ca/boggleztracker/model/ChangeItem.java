@@ -4,6 +4,7 @@
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-03: Added toString() method for printing
+ * - 2024-07-06: writeChangeItem implementation
  * Purpose:
  * ChangeItem class represents a change item of a particular product release and is responsible for
  * managing the change requests of the change item. The class stores data such as changeID, priority
@@ -11,19 +12,27 @@
  */
 package ca.boggleztracker.model;
 
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
 
 public class ChangeItem {
     //=============================
+    // Constants and static fields
+    //=============================
+    public static final int MAX_DESCRIPTION = 30;
+    public static final int MAX_STATUS = 12;
+
+
+    //=============================
     // Member fields
     //=============================
     private int changeID;
-    private String productName;
-    private String changeDescription;
+    private char[] productName;
+    private char[] releaseID;
+    private char[] changeDescription;
     private int priority;
-    private String releaseID;
-    private String status;
+    private char[] status;
     private LocalDate anticipatedReleaseDate;
 
     //=============================
@@ -35,22 +44,32 @@ public class ChangeItem {
      * Six argument constructor for ChangeItem. Change ID is randomly generated, using
      * utility function generateRandomChangeID().
      *
-     * @param releaseID (in) String - Release ID change is referencing to
+     * @param productName (in) String - Product of change  is referencing to.
+     * @param releaseID (in) String - Release ID change is referencing to.
      * @param changeDescription (in) String - Description of change item.
-     * @param priority (in) int - Priority of the change item (1 - 5)
-     * @param status (in) String - status of the change item
+     * @param priority (in) int - Priority of the change item (1 - 5).
+     * @param status (in) String - status of the change item.
      *               (Open, Assessed, In Progress, Completed, Cancelled).
      * @param anticipatedReleaseDate - Anticipated release date of the change item.
      */
     //---
-    public ChangeItem(String releaseID, String productName, String changeDescription, int priority,
-                      String status, LocalDate anticipatedReleaseDate) {}
+    public ChangeItem(String productName, String releaseID, String changeDescription, int priority,
+                      String status, LocalDate anticipatedReleaseDate) {
+        this.changeID = generateRandomChangeID();
+        this.productName = ScenarioManager.padCharArray(productName.toCharArray(), Product.MAX_PRODUCT_NAME);
+        this.releaseID = ScenarioManager.padCharArray(releaseID.toCharArray(), Release.MAX_RELEASE_ID);
+        this.changeDescription = ScenarioManager.padCharArray(changeDescription.toCharArray(), MAX_DESCRIPTION);
+        this.priority = priority;
+        this.status = ScenarioManager.padCharArray(status.toCharArray(), MAX_STATUS);
+        this.anticipatedReleaseDate = anticipatedReleaseDate;
+    }
 
     //-----------------------------
     /**
      * Six argument constructor for creating a "modifed" ChangeItem.
      *
      * @param changeID (in) int - change ID of the change item.
+     * @param productName (in) String - Product of change  is referencing to.
      * @param releaseID (in) String - Release ID change is referencing to
      * @param changeDescription (in) String - Description of change item.
      * @param priority (in) int - Priority of the change item (1 - 5)
@@ -59,7 +78,16 @@ public class ChangeItem {
      * @param anticipatedReleaseDate - Anticipated release date of the change item.
      */
     //---
-    public ChangeItem(int changeID, String productName, String releaseID, String changeDescription, int priority, String status, LocalDate anticipatedReleaseDate) {}
+    public ChangeItem(int changeID, String productName, String releaseID, String changeDescription,
+                      int priority, String status, LocalDate anticipatedReleaseDate) {
+        this.changeID = changeID;
+        this.productName = ScenarioManager.padCharArray(productName.toCharArray(), Product.MAX_PRODUCT_NAME);
+        this.releaseID = ScenarioManager.padCharArray(releaseID.toCharArray(), Release.MAX_RELEASE_ID);
+        this.changeDescription = ScenarioManager.padCharArray(changeDescription.toCharArray(), MAX_DESCRIPTION);
+        this.priority = priority;
+        this.status = ScenarioManager.padCharArray(status.toCharArray(), MAX_STATUS);
+        this.anticipatedReleaseDate = anticipatedReleaseDate;
+    }
 
     //=============================
     // Methods
@@ -68,9 +96,12 @@ public class ChangeItem {
     //-----------------------------
     /**
      * Generates a random change ID upon instantiation of object.
+     * @return (out) int - random generated change ID.
      */
     //---
-    private void generateRandomChangeID() {}
+    private int generateRandomChangeID() {
+        return 1; //temporary
+    }
 
     //-----------------------------
     /**
@@ -79,7 +110,16 @@ public class ChangeItem {
      * @param file (in) RandomAccessFile - The file to read from.
      */
     //---
-    public void writeChangeItem(RandomAccessFile file) {}
+    public void writeChangeItem(RandomAccessFile file) throws IOException {
+        file.writeInt(changeID);
+        file.writeChars(new String(productName));
+        file.writeChars(new String(releaseID));
+        file.writeChars(new String(changeDescription));
+        file.writeInt(priority);
+        file.writeChars(new String(status));
+        file.writeChars(anticipatedReleaseDate.toString()); // format to yyyy-mm-dd (20 bytes)
+        System.out.println("Change Item: " + file.length());
+    }
 
     //-----------------------------
     /**
