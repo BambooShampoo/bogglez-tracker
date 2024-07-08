@@ -4,6 +4,7 @@
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-04: Created individual RandomAccessFiles for each file, opened on start and closed on system shut down.
+ * - 2024-07-08: Completed add methods
  * Purpose:
  * ScenarioManager class is responsible for opening and closing the data file,
  * populating the array lists of products and requesters, and supports various interactions
@@ -93,6 +94,7 @@ public class ScenarioManager {
     public void addRequester(String email, String name, long phoneNumber, String department) {
         Requester requester = new Requester(email, name, phoneNumber, department);
         try {
+            requesterFile.seek(requesterFile.length());
             requester.writeRequester(requesterFile);
         } catch (IOException e) {
             System.err.println("Error writing requester to file " + e.getMessage());
@@ -109,6 +111,7 @@ public class ScenarioManager {
     public void addProduct(String productName) {
         Product product = new Product(productName);
         try {
+            productFile.seek(productFile.length());
             product.writeProduct(productFile);
         } catch (IOException e) {
             System.err.println("Error writing product to file " + e.getMessage());
@@ -131,6 +134,7 @@ public class ScenarioManager {
         ChangeRequest changeRequest = new ChangeRequest(changeID, productName,
                 reportedRelease, requesterEmail, reportedDate);
         try {
+            changeRequestFile.seek(changeRequestFile.length());
             changeRequest.writeChangeRequest(changeRequestFile);
         } catch (IOException e) {
             System.err.println("Error writing product to file " + e.getMessage());
@@ -152,6 +156,7 @@ public class ScenarioManager {
         ChangeItem changeItem = new ChangeItem(productName, releaseID, changeDescription,
                 priority, status, anticipatedReleaseDate);
         try {
+            changeItemFile.seek(changeItemFile.length());
             changeItem.writeChangeItem(changeItemFile);
         } catch (IOException e) {
             System.err.println("Error writing change item to file " + e.getMessage());
@@ -185,6 +190,7 @@ public class ScenarioManager {
     public void addRelease(String productName, String releaseID, LocalDate date) {
         Release release = new Release(productName, releaseID, date);
         try {
+            releaseFile.seek(releaseFile.length());
             release.writeRelease(releaseFile);
         } catch (IOException e) {
             System.err.println("Error writing release to file " + e.getMessage());
@@ -241,7 +247,7 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
-     * Gets a list of all pending change items of a specific product.
+     * Get s a list of all pending change items of a specificproduct.
      *
      * @param productName (in) String - Product name reference to find all pending changes.
      */

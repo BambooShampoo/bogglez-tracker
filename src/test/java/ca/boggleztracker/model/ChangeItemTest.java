@@ -9,6 +9,7 @@
 
 package ca.boggleztracker.model;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.io.RandomAccessFile;
 
@@ -50,7 +51,7 @@ class ChangeItemTest {
             RandomAccessFile myFile = new RandomAccessFile(filename, "rw");
             changeItem.writeChangeItem(myFile);
         }
-        catch(FileNotFoundException e) {
+        catch(IOException e) {
             System.out.println("File not found\n");
         }
     }

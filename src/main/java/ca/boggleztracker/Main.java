@@ -34,6 +34,7 @@ public class Main {
 
             //ui.start();
             manager.addProduct("BOGGLEZ");
+            manager.addProduct("BOGGLEZ2");
             manager.addRelease("BOGGLEZ", "v1.0", LocalDate.of(2024, 7, 6));
             manager.addRequester("edc@gmail.com", "emmanuel", 16045123258L, "QA");
             manager.addChangeItem("BOGGLEZ", "v1.0", "Error on search bar", 5, "Open", LocalDate.of(2024, 7, 6));
