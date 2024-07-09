@@ -13,6 +13,7 @@ package ca.boggleztracker.model;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.sql.SQLOutput;
 
 public class Product {
     //=============================
@@ -74,5 +75,7 @@ public class Product {
      * @param file (in) RandomAccessFile - The file to read from.
      */
     //---
-    public void readProduct(RandomAccessFile file) {}
+    public void readProduct(RandomAccessFile file) throws IOException{
+        productName = ScenarioManager.readCharsFromFile(file, Product.MAX_PRODUCT_NAME);
+    }
 }

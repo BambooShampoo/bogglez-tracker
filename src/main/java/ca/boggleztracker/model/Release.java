@@ -84,5 +84,9 @@ public class Release {
      * @param file (in) RandomAccessFile - The file to read from.
      */
     //---
-    public void readRelease(RandomAccessFile file) {}
+    public void readRelease(RandomAccessFile file) throws IOException{
+        productName = ScenarioManager.readCharsFromFile(file, Product.MAX_PRODUCT_NAME);
+        releaseID = ScenarioManager.readCharsFromFile(file, Release.MAX_RELEASE_ID);
+        date = ScenarioManager.readDateFromFile(file);
+    }
 }
