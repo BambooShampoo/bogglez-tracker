@@ -21,7 +21,7 @@ public class Release {
     // Constants and static fields
     //=============================
     public static final int MAX_RELEASE_ID = 8;
-
+    public static final int BYTES_SIZE_RELEASE = 56;
     //=============================
     // Member fields
     //=============================

@@ -21,7 +21,7 @@ public class Product {
     //=============================
     public static final int MAX_PRODUCT_NAME = 10;
     public static final int SIZE = MAX_PRODUCT_NAME * 2;
-
+    public static final int BYTES_SIZE_PRODUCT = 20;
     //=============================
     // Member fields
     //=============================

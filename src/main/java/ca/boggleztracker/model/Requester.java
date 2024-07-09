@@ -21,6 +21,7 @@ public class Requester {
     public static final int MAX_EMAIL = 24;
     public static final int MAX_NAME = 30;
     public static final int MAX_DEPARTMENT = 2;
+    public static final long BYTES_SIZE_REQUESTER = 120;
 
     //=============================
     // Member fields
