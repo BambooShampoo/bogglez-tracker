@@ -18,6 +18,10 @@ import java.time.LocalDate;
 
 public class ChangeRequest {
     //=============================
+    // Constants and static fields
+    //=============================
+    public static final int BYTES_SIZE_CHANGE_REQUEST = 108;
+    //=============================
     // Member fields
     //=============================
     private int changeID;

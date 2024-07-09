@@ -207,7 +207,31 @@ public class ScenarioManager {
      * @param modifiedChangeItem (in) ChangeItem - The new modified change item to be written
      *                          into file.
      */
-    public void modifyChangeItem(int changeID, ChangeItem modifiedChangeItem) {}
+    public void modifyChangeItem(int changeID, ChangeItem modifiedChangeItem) {
+
+        try {
+            int pos = 0; // current position in file
+            char[] buffer = new char[142]; // to store unneeded read characters from <readCharFromFile>
+            char[] readChangeID = new char[6];
+            for(long i = 0; i < releaseFile.length(); i += ChangeItem.BYTES_SIZE_CHANGE_ITEM){
+                // update current position
+                pos += ChangeItem.BYTES_SIZE_CHANGE_ITEM;
+                // convert the char[] into int to compare with <changeID>
+                readChangeID = readCharsFromFile(requesterFile, 6);
+                String temp = new String(readChangeID);
+                if(changeID == Integer.parseInt(temp)){
+                    break;
+                }
+                buffer = readCharsFromFile(requesterFile, 142);
+                readCharsFromFile(requesterFile, 1); // new line
+            }
+            // write the new ChangeItem over the old one
+            changeItemFile.seek(pos);
+            modifiedChangeItem.writeChangeItem(changeItemFile);
+        } catch (IOException e) {
+            System.err.println("Error writing change item to file " + e.getMessage());
+        }
+    }
 
     /**
      * Modifies a specific release in the file.
@@ -215,7 +239,33 @@ public class ScenarioManager {
      * @param releaseID (in) String - Release ID reference to be searched in file.
      * @param modifiedRelease (in) Release - The new modified release to be written into file.
      */
-    public void modifyRelease(String releaseID, Release modifiedRelease) {}
+    public void modifyRelease(String releaseID, Release modifiedRelease) {
+        try {
+            int pos = 0; // current position in file
+            char[] buffer = new char[10]; // to store unneeded read characters from <readCharFromFile>
+            char[] tempReleaseID = new char[Release.MAX_RELEASE_ID]; // to store the read releaseID
+            for(long i = 0; i < releaseFile.length(); i += Release.BYTES_SIZE_RELEASE){
+                // update position in file
+                pos += Release.BYTES_SIZE_RELEASE;
+                // read Product in buffer
+                buffer = readCharsFromFile(requesterFile, 10);
+                // read and parse releaseID
+                tempReleaseID = readCharsFromFile(requesterFile, Release.MAX_RELEASE_ID);
+                String temp = new String(tempReleaseID);
+                if(releaseID.equals(temp)){
+                    break;
+                }
+                // read rest of line
+                buffer = readCharsFromFile(requesterFile, 10);
+                readCharsFromFile(requesterFile, 1); // new line
+            }
+            // Write the new Release over the old one
+            releaseFile.seek(pos);
+            modifiedRelease.writeRelease(releaseFile);
+        } catch (IOException e) {
+            System.err.println("Error writing release to file " + e.getMessage());
+        }
+    }
 
     /**
      * Adds a new release to the file.
