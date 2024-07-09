@@ -4,13 +4,14 @@
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-06: writeChangeRequest implementation
+ * - 2024-07-08: readChangeRequest implementation
+ *
  * Purpose:
  * ChangeRequest class represents a change request of a product, storing data such as
  * reported date and the requester.
  */
 package ca.boggleztracker.model;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;

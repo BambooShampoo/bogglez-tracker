@@ -5,6 +5,7 @@
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-03: Added toString() method for printing
  * - 2024-07-06: writeChangeItem implementation
+ * - 2024-07-08: readChangeItem implementation
  * Purpose:
  * ChangeItem class represents a change item of a particular product release and is responsible for
  * managing the change requests of the change item. The class stores data such as changeID, priority
@@ -15,6 +16,7 @@ package ca.boggleztracker.model;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class ChangeItem {
     //=============================
@@ -150,9 +152,18 @@ public class ChangeItem {
         status = ScenarioManager.readCharsFromFile(file, MAX_STATUS);
         anticipatedReleaseDate = ScenarioManager.readDateFromFile(file);
     }
-
     //---
 
     @Override
-    public String toString() {return null;}
+    public String toString() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return "Change Details:\n" +
+                "Change ID: " + changeID + "\n" +
+                "Product Name: " + new String(productName) + "\n" +
+                "Release ID: " + new String(releaseID) + "\n" +
+                "Change Description: " + new String(changeDescription) + "\n" +
+                "Priority: " + priority + "\n" +
+                "Status: " + new String(status) + "\n" +
+                "Anticipated Release Date: " + anticipatedReleaseDate.format(formatter);
+    }
 }

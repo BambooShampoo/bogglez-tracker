@@ -4,6 +4,7 @@
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-04: writeProduct implementation
+ * - 2024-07-08: readProduct implementation
  * Purpose:
  * Product class represents a product in the system and is responsible for
  * managing the releases of the product. The class stores data such as product name
@@ -13,7 +14,6 @@ package ca.boggleztracker.model;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.sql.SQLOutput;
 
 public class Product {
     //=============================

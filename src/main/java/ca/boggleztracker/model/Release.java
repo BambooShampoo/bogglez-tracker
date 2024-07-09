@@ -4,6 +4,7 @@
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-06: writeRelease implementation
+ * - 2024-07-08: readRelease implementation
  * Purpose:
  * Release class represents a release of a product in the system and is responsible for
  * managing the change items of the release. The class stores data such as release ID,

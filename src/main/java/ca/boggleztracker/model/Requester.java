@@ -4,6 +4,7 @@
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-06: writeRequester implementation
+ * - 2024-07-08: readRequester implementation
  * Purpose:
  * Requester class represents a requester in the system, storing data such as email,
  * name, phone number, and department.

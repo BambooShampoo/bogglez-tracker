@@ -5,6 +5,7 @@
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-04: Created individual RandomAccessFiles for each file, opened on start and closed on system shut down.
  * - 2024-07-08: Completed add methods
+ * - 2024-07-08: read helper methods
  * Purpose:
  * ScenarioManager class is responsible for opening and closing the data file,
  * populating the array lists of products and requesters, and supports various interactions
@@ -13,11 +14,11 @@
 
 package ca.boggleztracker.model;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 public class ScenarioManager {
     //=============================
@@ -28,6 +29,7 @@ public class ScenarioManager {
     private static final String RELEASE_FILE = "release.dat";
     private static final String CHANGE_ITEM_FILE = "change-item.dat";
     private static final String CHANGE_REQUEST_FILE = "change-request.dat";
+    private static final int LOCAL_DATE_LENGTH = 10;
 
     //=============================
     // Member fields
@@ -62,6 +64,7 @@ public class ScenarioManager {
      * @param padLength (in) int - length of new character array.
      * @return (out) char[] - character array with padded spaces.
      */
+    //---
     public static char[] padCharArray(char[] charArray, int padLength) {
         char[] temp = new char[padLength];
 
@@ -90,6 +93,7 @@ public class ScenarioManager {
      * @param file (in) RandomAccessFile - file to read char array from.
      * @param numChars (in) int - number of bytes the char array consists of.
      */
+    //---
     public static char[] readCharsFromFile(RandomAccessFile file, int numChars) throws IOException {
         char[] temp = new char[numChars];
 
@@ -100,14 +104,15 @@ public class ScenarioManager {
         return temp;
     }
 
+    //-----------------------------
     /**
      * Helper function to read local dates from file.
      *
      * @param file (in) RandomAccessFile - file to read local date from.
      */
+    //---
     public static LocalDate readDateFromFile(RandomAccessFile file) throws IOException {
-        int dateLength = 10 * 2; //yyyy-mm-dd
-        char[] temp = readCharsFromFile(file, dateLength);
+        char[] temp = readCharsFromFile(file, LOCAL_DATE_LENGTH);
         String date = new String(temp);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return LocalDate.parse(date, formatter);
@@ -295,6 +300,20 @@ public class ScenarioManager {
     //---
     public String generateCompletedChangesPage() {
         return "";
+    }
+
+    // ****temporary testing method - delete later.
+    public void readAllChangeItem() throws IOException {
+        ChangeItem change = new ChangeItem("", "", "", 0, "", LocalDate.of(2000, 1 ,1));
+        changeItemFile.seek(0);
+        try {
+            while (true) {
+                change.readChangeItems(changeItemFile);
+                System.out.println(change);
+            }
+        } catch (EOFException e) {
+            System.out.println("\n");
+        }
     }
 
     //-----------------------------

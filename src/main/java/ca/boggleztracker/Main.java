@@ -33,12 +33,9 @@ public class Main {
             TextUI ui = new TextUI(manager);
 
             //ui.start();
-            manager.addProduct("BOGGLEZ");
-            manager.addProduct("BOGGLEZ2");
-            manager.addRelease("BOGGLEZ", "v1.0", LocalDate.of(2024, 7, 6));
-            manager.addRequester("edc@gmail.com", "emmanuel", 16045123258L, "QA");
             manager.addChangeItem("BOGGLEZ", "v1.0", "Error on search bar", 5, "Open", LocalDate.of(2024, 7, 6));
-            manager.addChangeRequest(1, "BOGGLEZ", "v1.0", "abc@gmail.com", LocalDate.of(2024, 7, 6));
+            manager.addChangeItem("BOGGLEZ", "v2.0", "Error on file system", 4, "Closed", LocalDate.of(2024, 8, 7));
+            manager.readAllChangeItem();
 
             manager.closeFiles();
         } catch (IOException e) {
