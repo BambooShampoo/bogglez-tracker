@@ -87,5 +87,10 @@ public class Requester {
      * @param file (in) RandomAccessFile - The file to read from.
      */
     //---
-    public void readRequester(RandomAccessFile file) {}
+    public void readRequester(RandomAccessFile file) throws IOException{
+        email = ScenarioManager.readCharsFromFile(file, Requester.MAX_EMAIL);
+        name = ScenarioManager.readCharsFromFile(file, Requester.MAX_NAME);
+        phoneNumber = file.readLong();
+        department = ScenarioManager.readCharsFromFile(file, Requester.MAX_DEPARTMENT);
+    }
 }

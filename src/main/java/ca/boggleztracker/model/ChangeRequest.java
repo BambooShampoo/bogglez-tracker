@@ -10,6 +10,7 @@
  */
 package ca.boggleztracker.model;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
@@ -83,5 +84,11 @@ public class ChangeRequest {
      * @param file (in) RandomAccessFile - The file to read from.
      */
     //---
-    public void readChangeRequest(RandomAccessFile file) {}
+    public void readChangeRequest(RandomAccessFile file) throws IOException{
+        changeID = file.readInt();
+        productName = ScenarioManager.readCharsFromFile(file, Product.MAX_PRODUCT_NAME);
+        reportedRelease = ScenarioManager.readCharsFromFile(file, Release.MAX_RELEASE_ID);
+        requesterEmail = ScenarioManager.readCharsFromFile(file, Requester.MAX_EMAIL);
+        reportedDate = ScenarioManager.readDateFromFile(file);
+    }
 }

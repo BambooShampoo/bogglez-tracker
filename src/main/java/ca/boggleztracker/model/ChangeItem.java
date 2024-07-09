@@ -141,7 +141,15 @@ public class ChangeItem {
      * @param file (in) RandomAccessFile - The file to read from.
      */
     //---
-    public void readChangeItems(RandomAccessFile file) {}
+    public void readChangeItems(RandomAccessFile file) throws IOException{
+        changeID = file.readInt();
+        productName = ScenarioManager.readCharsFromFile(file, Product.MAX_PRODUCT_NAME);
+        releaseID = ScenarioManager.readCharsFromFile(file, Release.MAX_RELEASE_ID);
+        changeDescription = ScenarioManager.readCharsFromFile(file, MAX_DESCRIPTION);
+        priority = file.readInt();
+        status = ScenarioManager.readCharsFromFile(file, MAX_STATUS);
+        anticipatedReleaseDate = ScenarioManager.readDateFromFile(file);
+    }
 
     //---
 

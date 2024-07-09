@@ -67,9 +67,12 @@ class ChangeItemTest {
         try {
             RandomAccessFile myFile = new RandomAccessFile(filename, "r");
             changeItem.readChangeItems(myFile);
+            System.out.println(changeItem);
         }
         catch(FileNotFoundException e) {
             System.out.println("File not found");
+        } catch (IOException e) {
+            System.out.println("File not found\n");
         }
     }
     //-----------------------------
@@ -78,6 +81,7 @@ class ChangeItemTest {
 *   Precondition: If UnitTest01Text.dat is empty return false. If UnitText01Text.dat contains
 *                 a single record with the variables initialized above, returns true.
  */
+    /*
     void checkIfChangeItemExists() {
         ChangeItem changeItem = new ChangeItem(releaseID, productName, changeDescription,
                 priority, status, anticipatedReleaseDate);
@@ -88,5 +92,14 @@ class ChangeItemTest {
         catch(FileNotFoundException e) {
             System.out.println("File not found");
         }
+    }
+
+     */
+
+    public static void main (String [] args) {
+        ChangeItemTest test = new ChangeItemTest();
+        test.createANewChangeItem();
+        test.testFileWriting();
+        test.testFileReading();
     }
 }

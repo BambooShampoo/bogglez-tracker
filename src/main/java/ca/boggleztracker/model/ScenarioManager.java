@@ -16,6 +16,8 @@ package ca.boggleztracker.model;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class ScenarioManager {
     //=============================
@@ -79,6 +81,36 @@ public class ScenarioManager {
             }
         }
         return temp;
+    }
+
+    //-----------------------------
+    /**
+     * Helper function to read char arrays from file.
+     *
+     * @param file (in) RandomAccessFile - file to read char array from.
+     * @param numChars (in) int - number of bytes the char array consists of.
+     */
+    public static char[] readCharsFromFile(RandomAccessFile file, int numChars) throws IOException {
+        char[] temp = new char[numChars];
+
+        //reads each byte
+        for (int i = 0; i < numChars; i++) {
+            temp[i] = file.readChar();
+        }
+        return temp;
+    }
+
+    /**
+     * Helper function to read local dates from file.
+     *
+     * @param file (in) RandomAccessFile - file to read local date from.
+     */
+    public static LocalDate readDateFromFile(RandomAccessFile file) throws IOException {
+        int dateLength = 10 * 2; //yyyy-mm-dd
+        char[] temp = readCharsFromFile(file, dateLength);
+        String date = new String(temp);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(date, formatter);
     }
 
     //-----------------------------
