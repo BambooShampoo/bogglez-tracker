@@ -9,6 +9,7 @@
 
 package ca.boggleztracker.model;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.io.RandomAccessFile;
 
@@ -49,7 +50,8 @@ class ChangeItemTest {
         try {
             RandomAccessFile myFile = new RandomAccessFile(filename, "rw");
             changeItem.writeChangeItem(myFile);
-        } catch(FileNotFoundException e) {
+        }
+        catch(IOException e) {
             System.out.println("File not found\n");
         }
     }
@@ -65,8 +67,12 @@ class ChangeItemTest {
         try {
             RandomAccessFile myFile = new RandomAccessFile(filename, "r");
             changeItem.readChangeItems(myFile);
-        } catch(FileNotFoundException e) {
+            System.out.println(changeItem);
+        }
+        catch(FileNotFoundException e) {
             System.out.println("File not found");
+        } catch (IOException e) {
+            System.out.println("File not found\n");
         }
     }
     //-----------------------------
@@ -75,14 +81,25 @@ class ChangeItemTest {
 *   Precondition: If UnitTest01Text.dat is empty return false. If UnitText01Text.dat contains
 *                 a single record with the variables initialized above, returns true.
  */
+    /*
     void checkIfChangeItemExists() {
         ChangeItem changeItem = new ChangeItem(releaseID, productName, changeDescription,
                 priority, status, anticipatedReleaseDate);
         try {
             RandomAccessFile myFile = new RandomAccessFile(filename, "r");
             changeItem.changeItemExists(myFile, priority, status, anticipatedReleaseDate);
-        } catch(FileNotFoundException e) {
+        }
+        catch(FileNotFoundException e) {
             System.out.println("File not found");
         }
+    }
+
+     */
+
+    public static void main (String [] args) {
+        ChangeItemTest test = new ChangeItemTest();
+        test.createANewChangeItem();
+        test.testFileWriting();
+        test.testFileReading();
     }
 }

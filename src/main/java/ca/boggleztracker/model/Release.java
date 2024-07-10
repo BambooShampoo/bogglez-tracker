@@ -3,6 +3,8 @@
  * Revision History:
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-02: System redesign remove storing records into RAM
+ * - 2024-07-06: writeRelease implementation
+ * - 2024-07-08: readRelease implementation
  * Purpose:
  * Release class represents a release of a product in the system and is responsible for
  * managing the change items of the release. The class stores data such as release ID,
@@ -10,15 +12,21 @@
  */
 package ca.boggleztracker.model;
 
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
 
 public class Release {
     //=============================
+    // Constants and static fields
+    //=============================
+    public static final int MAX_RELEASE_ID = 8;
+    public static final int BYTES_SIZE_RELEASE = 56;
+    //=============================
     // Member fields
     //=============================
-    private String productName;
-    private String releaseID;
+    private char[] productName;
+    private char[] releaseID;
     private LocalDate date;
 
     //=============================
@@ -34,7 +42,11 @@ public class Release {
      * @param date (in) LocalDate - Date of the release.
      */
     //---
-    public Release(String productName, String releaseID, LocalDate date) {}
+    public Release(String productName, String releaseID, LocalDate date) {
+        this.productName = ScenarioManager.padCharArray(productName.toCharArray(), Product.MAX_PRODUCT_NAME);
+        this.releaseID = ScenarioManager.padCharArray(releaseID.toCharArray(), MAX_RELEASE_ID);
+        this.date = date;
+    }
 
     //=============================
     // Methods
@@ -47,7 +59,12 @@ public class Release {
      * @param file (in) RandomAccessFile - The file to read from.
      */
     //---
-    public void writeRelease(RandomAccessFile file) {}
+    public void writeRelease(RandomAccessFile file) throws IOException {
+        file.writeChars(new String(productName));
+        file.writeChars(new String(releaseID));
+        file.writeChars(date.toString()); // format to yyyy-mm-dd (20 bytes)
+        System.out.println("Release: " + file.length());
+    }
 
     //-----------------------------
     /**
@@ -68,5 +85,9 @@ public class Release {
      * @param file (in) RandomAccessFile - The file to read from.
      */
     //---
-    public void readRelease(RandomAccessFile file) {}
+    public void readRelease(RandomAccessFile file) throws IOException{
+        productName = ScenarioManager.readCharsFromFile(file, Product.MAX_PRODUCT_NAME);
+        releaseID = ScenarioManager.readCharsFromFile(file, Release.MAX_RELEASE_ID);
+        date = ScenarioManager.readDateFromFile(file);
+    }
 }

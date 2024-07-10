@@ -3,23 +3,31 @@
  * Revision History:
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-02: System redesign remove storing records into RAM
+ * - 2024-07-06: writeChangeRequest implementation
+ * - 2024-07-08: readChangeRequest implementation
+ *
  * Purpose:
  * ChangeRequest class represents a change request of a product, storing data such as
  * reported date and the requester.
  */
 package ca.boggleztracker.model;
 
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
 
 public class ChangeRequest {
     //=============================
+    // Constants and static fields
+    //=============================
+    public static final int BYTES_SIZE_CHANGE_REQUEST = 108;
+    //=============================
     // Member fields
     //=============================
     private int changeID;
-    private String productName;
-    private String reportedRelease;
-    private String requesterEmail;
+    private char[] productName;
+    private char[] reportedRelease;
+    private char[] requesterEmail;
     private LocalDate reportedDate;
 
     //-----------------------------
@@ -34,7 +42,13 @@ public class ChangeRequest {
      */
     //---
     public ChangeRequest(int changeID, String productName, String reportedRelease,
-                         String requesterEmail, LocalDate reportedDate) {}
+                         String requesterEmail, LocalDate reportedDate) {
+        this.changeID = changeID;
+        this.productName = ScenarioManager.padCharArray(productName.toCharArray(), Product.MAX_PRODUCT_NAME);
+        this.reportedRelease = ScenarioManager.padCharArray(reportedRelease.toCharArray(), Release.MAX_RELEASE_ID);
+        this.requesterEmail = ScenarioManager.padCharArray(requesterEmail.toCharArray(), Requester.MAX_EMAIL);
+        this.reportedDate = reportedDate;
+    }
 
     //-----------------------------
     /**
@@ -43,7 +57,14 @@ public class ChangeRequest {
      * @param file (in) RandomAccessFile - The file to read from.
      */
     //---
-    public void writeChangeRequest(RandomAccessFile file) {}
+    public void writeChangeRequest(RandomAccessFile file) throws IOException {
+        file.writeInt(changeID);
+        file.writeChars(new String(productName));
+        file.writeChars(new String(reportedRelease));
+        file.writeChars(new String(requesterEmail));
+        file.writeChars(reportedDate.toString()); // format to yyyy-mm-dd (20 bytes)
+        System.out.println("Change Request: " + file.length());
+    }
 
     //-----------------------------
     /**
@@ -68,5 +89,11 @@ public class ChangeRequest {
      * @param file (in) RandomAccessFile - The file to read from.
      */
     //---
-    public void readChangeRequest(RandomAccessFile file) {}
+    public void readChangeRequest(RandomAccessFile file) throws IOException{
+        changeID = file.readInt();
+        productName = ScenarioManager.readCharsFromFile(file, Product.MAX_PRODUCT_NAME);
+        reportedRelease = ScenarioManager.readCharsFromFile(file, Release.MAX_RELEASE_ID);
+        requesterEmail = ScenarioManager.readCharsFromFile(file, Requester.MAX_EMAIL);
+        reportedDate = ScenarioManager.readDateFromFile(file);
+    }
 }

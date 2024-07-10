@@ -3,6 +3,9 @@
  * Revision History:
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-02: System redesign remove storing records into RAM
+ * - 2024-07-04: Created individual RandomAccessFiles for each file, opened on start and closed on system shut down.
+ * - 2024-07-08: Completed add methods
+ * - 2024-07-08: read helper methods
  * Purpose:
  * ScenarioManager class is responsible for opening and closing the data file,
  * populating the array lists of products and requesters, and supports various interactions
@@ -11,8 +14,11 @@
 
 package ca.boggleztracker.model;
 
+import java.io.EOFException;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class ScenarioManager {
     //=============================
@@ -21,13 +27,29 @@ public class ScenarioManager {
     private static final String REQUESTER_FILE = "requester.dat";
     private static final String PRODUCT_FILE = "product.dat";
     private static final String RELEASE_FILE = "release.dat";
-    private static final String CHANGE_ITEM_FILE = "change_item.dat";
+    private static final String CHANGE_ITEM_FILE = "change-item.dat";
     private static final String CHANGE_REQUEST_FILE = "change-request.dat";
+    private static final int LOCAL_DATE_LENGTH = 10;
 
     //=============================
     // Member fields
     //=============================
-    private RandomAccessFile file;
+    private RandomAccessFile requesterFile;
+    private RandomAccessFile productFile;
+    private RandomAccessFile releaseFile;
+    private RandomAccessFile changeItemFile;
+    private RandomAccessFile changeRequestFile;
+
+    //=============================
+    // Constructor
+    //=============================
+    public ScenarioManager() throws IOException {
+        requesterFile = new RandomAccessFile(REQUESTER_FILE, "rw");
+        productFile = new RandomAccessFile(PRODUCT_FILE, "rw");
+        releaseFile = new RandomAccessFile(RELEASE_FILE, "rw");
+        changeItemFile = new RandomAccessFile(CHANGE_ITEM_FILE, "rw");
+        changeRequestFile = new RandomAccessFile(CHANGE_REQUEST_FILE, "rw");
+    }
 
     //=============================
     // Methods
@@ -35,13 +57,66 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
-     * Opens the specified file for reading and writing.
+     * Helper function to pad character array with spaces to ensure
+     * it's of desired length.
      *
-     * @param fileName (in) String - Name of the file to open.
-     * @param mode (in) String - Access mode.
+     * @param charArray (in) char[] - character array to pad.
+     * @param padLength (in) int - length of new character array.
+     * @return (out) char[] - character array with padded spaces.
      */
     //---
-    public void openFile(String fileName, String mode) {}
+    public static char[] padCharArray(char[] charArray, int padLength) {
+        char[] temp = new char[padLength];
+
+        if (charArray.length > padLength) {
+            for (int i = 0; i < charArray.length; i++) {
+                temp[i] = charArray[i];
+            }
+        } else {
+            // Copy all characters from productName
+            for (int i = 0; i < charArray.length; i++) {
+                temp[i] = charArray[i];
+            }
+
+            // Pad with spaces to max length
+            for (int i = charArray.length; i < padLength; i++) {
+                temp[i] = ' ';
+            }
+        }
+        return temp;
+    }
+
+    //-----------------------------
+    /**
+     * Helper function to read char arrays from file.
+     *
+     * @param file (in) RandomAccessFile - file to read char array from.
+     * @param numChars (in) int - number of bytes the char array consists of.
+     */
+    //---
+    public static char[] readCharsFromFile(RandomAccessFile file, int numChars) throws IOException {
+        char[] temp = new char[numChars];
+
+        //reads each byte
+        for (int i = 0; i < numChars; i++) {
+            temp[i] = file.readChar();
+        }
+        return temp;
+    }
+
+    //-----------------------------
+    /**
+     * Helper function to read local dates from file.
+     *
+     * @param file (in) RandomAccessFile - file to read local date from.
+     */
+    //---
+    public static LocalDate readDateFromFile(RandomAccessFile file) throws IOException {
+        char[] temp = readCharsFromFile(file, LOCAL_DATE_LENGTH);
+        String date = new String(temp);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return LocalDate.parse(date, formatter);
+    }
 
     //-----------------------------
     /**
@@ -53,7 +128,15 @@ public class ScenarioManager {
      * @param department (in) String - Department of new requester. This can be left as empty.
      */
     //---
-    public void addRequester(String email, String name, int phoneNumber, String department) {}
+    public void addRequester(String email, String name, long phoneNumber, String department) {
+        Requester requester = new Requester(email, name, phoneNumber, department);
+        try {
+            requesterFile.seek(requesterFile.length());
+            requester.writeRequester(requesterFile);
+        } catch (IOException e) {
+            System.err.println("Error writing requester to file " + e.getMessage());
+        }
+    }
 
     //-----------------------------
     /**
@@ -62,7 +145,15 @@ public class ScenarioManager {
      * @param productName (in) String - Name of the new product.
      */
     //---
-    public void addProduct(String productName) {}
+    public void addProduct(String productName) {
+        Product product = new Product(productName);
+        try {
+            productFile.seek(productFile.length());
+            product.writeProduct(productFile);
+        } catch (IOException e) {
+            System.err.println("Error writing product to file " + e.getMessage());
+        }
+    }
 
     //-----------------------------
     /**
@@ -76,7 +167,16 @@ public class ScenarioManager {
      */
     //---
     public void addChangeRequest(int changeID, String productName, String reportedRelease,
-                                 String requesterEmail, LocalDate reportedDate) {}
+                                 String requesterEmail, LocalDate reportedDate) {
+        ChangeRequest changeRequest = new ChangeRequest(changeID, productName,
+                reportedRelease, requesterEmail, reportedDate);
+        try {
+            changeRequestFile.seek(changeRequestFile.length());
+            changeRequest.writeChangeRequest(changeRequestFile);
+        } catch (IOException e) {
+            System.err.println("Error writing product to file " + e.getMessage());
+        }
+    }
 
     /**
      * Adds a new change item to the file.
@@ -88,8 +188,17 @@ public class ScenarioManager {
      * @param status (in) String - Status of the change.
      * @param anticipatedReleaseDate (in) LocalDate - Date of anticipated release date.
      */
-    public void addChangeItem(String releaseID, String productName, String changeDescription, int priority,
-                              String status, LocalDate anticipatedReleaseDate) {}
+    public void addChangeItem(String productName, String releaseID, String changeDescription, int priority,
+                              String status, LocalDate anticipatedReleaseDate) {
+        ChangeItem changeItem = new ChangeItem(productName, releaseID, changeDescription,
+                priority, status, anticipatedReleaseDate);
+        try {
+            changeItemFile.seek(changeItemFile.length());
+            changeItem.writeChangeItem(changeItemFile);
+        } catch (IOException e) {
+            System.err.println("Error writing change item to file " + e.getMessage());
+        }
+    }
 
     /**
      * Modifies a specific change item in the file.
@@ -98,7 +207,31 @@ public class ScenarioManager {
      * @param modifiedChangeItem (in) ChangeItem - The new modified change item to be written
      *                          into file.
      */
-    public void modifyChangeItem(int changeID, ChangeItem modifiedChangeItem) {}
+    public void modifyChangeItem(int changeID, ChangeItem modifiedChangeItem) {
+
+        try {
+            int pos = 0; // current position in file
+            char[] buffer = new char[142]; // to store unneeded read characters from <readCharFromFile>
+            char[] readChangeID = new char[6];
+            for(long i = 0; i < releaseFile.length(); i += ChangeItem.BYTES_SIZE_CHANGE_ITEM){
+                // update current position
+                pos += ChangeItem.BYTES_SIZE_CHANGE_ITEM;
+                // convert the char[] into int to compare with <changeID>
+                readChangeID = readCharsFromFile(requesterFile, 6);
+                String temp = new String(readChangeID);
+                if(changeID == Integer.parseInt(temp)){
+                    break;
+                }
+                buffer = readCharsFromFile(requesterFile, 142);
+                readCharsFromFile(requesterFile, 1); // new line
+            }
+            // write the new ChangeItem over the old one
+            changeItemFile.seek(pos);
+            modifiedChangeItem.writeChangeItem(changeItemFile);
+        } catch (IOException e) {
+            System.err.println("Error writing change item to file " + e.getMessage());
+        }
+    }
 
     /**
      * Modifies a specific release in the file.
@@ -106,7 +239,33 @@ public class ScenarioManager {
      * @param releaseID (in) String - Release ID reference to be searched in file.
      * @param modifiedRelease (in) Release - The new modified release to be written into file.
      */
-    public void modifyRelease(String releaseID, Release modifiedRelease) {}
+    public void modifyRelease(String releaseID, Release modifiedRelease) {
+        try {
+            int pos = 0; // current position in file
+            char[] buffer = new char[10]; // to store unneeded read characters from <readCharFromFile>
+            char[] tempReleaseID = new char[Release.MAX_RELEASE_ID]; // to store the read releaseID
+            for(long i = 0; i < releaseFile.length(); i += Release.BYTES_SIZE_RELEASE){
+                // update position in file
+                pos += Release.BYTES_SIZE_RELEASE;
+                // read Product in buffer
+                buffer = readCharsFromFile(requesterFile, 10);
+                // read and parse releaseID
+                tempReleaseID = readCharsFromFile(requesterFile, Release.MAX_RELEASE_ID);
+                String temp = new String(tempReleaseID);
+                if(releaseID.equals(temp)){
+                    break;
+                }
+                // read rest of line
+                buffer = readCharsFromFile(requesterFile, 10);
+                readCharsFromFile(requesterFile, 1); // new line
+            }
+            // Write the new Release over the old one
+            releaseFile.seek(pos);
+            modifiedRelease.writeRelease(releaseFile);
+        } catch (IOException e) {
+            System.err.println("Error writing release to file " + e.getMessage());
+        }
+    }
 
     /**
      * Adds a new release to the file.
@@ -115,8 +274,15 @@ public class ScenarioManager {
      * @param releaseID (in) String - Identifier for the release
      * @param date (in) LocalDate - Date of release
      */
-    public void addRelease(String productName, String releaseID, LocalDate date) {}
-
+    public void addRelease(String productName, String releaseID, LocalDate date) {
+        Release release = new Release(productName, releaseID, date);
+        try {
+            releaseFile.seek(releaseFile.length());
+            release.writeRelease(releaseFile);
+        } catch (IOException e) {
+            System.err.println("Error writing release to file " + e.getMessage());
+        }
+    }
 
     //-----------------------------
     /**
@@ -168,7 +334,7 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
-     * Gets a list of all pending change items of a specific product.
+     * Get s a list of all pending change items of a specificproduct.
      *
      * @param productName (in) String - Product name reference to find all pending changes.
      */
@@ -186,10 +352,30 @@ public class ScenarioManager {
         return "";
     }
 
+    // ****temporary testing method - delete later.
+    public void readAllChangeItem() throws IOException {
+        ChangeItem change = new ChangeItem("", "", "", 0, "", LocalDate.of(2000, 1 ,1));
+        changeItemFile.seek(0);
+        try {
+            while (true) {
+                change.readChangeItems(changeItemFile);
+                System.out.println(change);
+            }
+        } catch (EOFException e) {
+            System.out.println("\n");
+        }
+    }
+
     //-----------------------------
     /**
      * Closes the file, on system shut down
      */
     //---
-    public void closeFile() {}
+    public void closeFiles() {
+        try {
+            requesterFile.close();
+        } catch (IOException e) {
+            System.err.println("Error closing files " + e.getMessage());
+        }
+    }
 }
