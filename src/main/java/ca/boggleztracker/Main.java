@@ -10,6 +10,8 @@
  */
 package ca.boggleztracker;
 
+import ca.boggleztracker.model.ChangeItem;
+import ca.boggleztracker.model.Release;
 import ca.boggleztracker.model.ScenarioManager;
 import ca.boggleztracker.ui.TextUI;
 
@@ -33,9 +35,14 @@ public class Main {
             TextUI ui = new TextUI(manager);
 
             //ui.start();
-            manager.addChangeItem("BOGGLEZ", "v1.0", "Error on search bar", 5, "Open", LocalDate.of(2024, 7, 6));
-            manager.addChangeItem("BOGGLEZ", "v2.0", "Error on file system", 4, "Closed", LocalDate.of(2024, 8, 7));
             manager.readAllChangeItem();
+            ChangeItem testChangeItem = new ChangeItem("BOGGLEZ", "v1.0", "Error on Search Bar", 1,
+            "Open", LocalDate.of(2024,7,6));
+            manager.modifyChangeItem(1,testChangeItem);
+            Release testRelease = new Release("BOGGLEZ","v1.1", LocalDate.of(2024,6,5));
+            manager.modifyRelease("v1.0    ",testRelease);
+            manager.readAllChangeItem();
+
 
             manager.closeFiles();
         } catch (IOException e) {

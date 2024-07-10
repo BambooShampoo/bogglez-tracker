@@ -68,6 +68,16 @@ public class Release {
 
     //-----------------------------
     /**
+     * returns the ReleaseID of the object that it calls from.
+     * @return (out) String - Release ID of the object.
+     */
+    //---
+    public String getReleaseID(){
+        return String.valueOf(releaseID);
+    }
+
+    //-----------------------------
+    /**
      * Checks file to see if an exact permutation of the three ProductRelease parameters already exists.
      *
      * @param file (in) RandomAccessFile - The file to read from.
