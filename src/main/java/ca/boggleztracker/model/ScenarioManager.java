@@ -208,24 +208,21 @@ public class ScenarioManager {
      *                          into file.
      */
     public void modifyChangeItem(int changeID, ChangeItem modifiedChangeItem) {
+        ChangeItem change = new ChangeItem("", "", "", 0,
+                "", LocalDate.of(2000, 1 ,1));
+        int pos = 0;
 
         try {
-            int pos = 0; // current position in file
-            char[] buffer = new char[142]; // to store unneeded read characters from <readCharFromFile>
-            char[] readChangeID = new char[6];
-            for(long i = 0; i < releaseFile.length(); i += ChangeItem.BYTES_SIZE_CHANGE_ITEM){
-                // update current position
-                pos += ChangeItem.BYTES_SIZE_CHANGE_ITEM;
-                // convert the char[] into int to compare with <changeID>
-                readChangeID = readCharsFromFile(requesterFile, 6);
-                String temp = new String(readChangeID);
-                if(changeID == Integer.parseInt(temp)){
+            changeItemFile.seek(pos);
+            //locate correct ChangeItem from file
+            while (true){
+                change.readChangeItems(changeItemFile);
+
+                if (changeID == change.getChangeID()){
                     break;
                 }
-                buffer = readCharsFromFile(requesterFile, 142);
-                readCharsFromFile(requesterFile, 1); // new line
+                pos += change.BYTES_SIZE_CHANGE_ITEM;
             }
-            // write the new ChangeItem over the old one
             changeItemFile.seek(pos);
             modifiedChangeItem.writeChangeItem(changeItemFile);
         } catch (IOException e) {
@@ -240,26 +237,20 @@ public class ScenarioManager {
      * @param modifiedRelease (in) Release - The new modified release to be written into file.
      */
     public void modifyRelease(String releaseID, Release modifiedRelease) {
+        Release fileRelease = new Release("","",LocalDate.of(2000, 1 ,1));
+        int pos = 0;
+
         try {
-            int pos = 0; // current position in file
-            char[] buffer = new char[10]; // to store unneeded read characters from <readCharFromFile>
-            char[] tempReleaseID = new char[Release.MAX_RELEASE_ID]; // to store the read releaseID
-            for(long i = 0; i < releaseFile.length(); i += Release.BYTES_SIZE_RELEASE){
-                // update position in file
-                pos += Release.BYTES_SIZE_RELEASE;
-                // read Product in buffer
-                buffer = readCharsFromFile(requesterFile, 10);
-                // read and parse releaseID
-                tempReleaseID = readCharsFromFile(requesterFile, Release.MAX_RELEASE_ID);
-                String temp = new String(tempReleaseID);
-                if(releaseID.equals(temp)){
+            releaseFile.seek(pos);
+            // locate correct Release from file
+            while (true){
+                fileRelease.readRelease(releaseFile);
+
+                if (releaseID.equals(fileRelease.getReleaseID())){
                     break;
                 }
-                // read rest of line
-                buffer = readCharsFromFile(requesterFile, 10);
-                readCharsFromFile(requesterFile, 1); // new line
+                pos += Release.BYTES_SIZE_RELEASE;
             }
-            // Write the new Release over the old one
             releaseFile.seek(pos);
             modifiedRelease.writeRelease(releaseFile);
         } catch (IOException e) {
@@ -334,7 +325,7 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
-     * Get s a list of all pending change items of a specificproduct.
+     * Get s a list of all pending change items of a specific product.
      *
      * @param productName (in) String - Product name reference to find all pending changes.
      */

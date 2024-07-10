@@ -107,6 +107,16 @@ public class ChangeItem {
 
     //-----------------------------
     /**
+     * returns the changeID of the object that it calls from.
+     * @return (out) int - change ID of the object.
+     */
+    //---
+    public int getChangeID(){
+        return changeID;
+    }
+
+    //-----------------------------
+    /**
      * Writes the contents of release object to the release file.
      *
      * @param file (in) RandomAccessFile - The file to read from.
