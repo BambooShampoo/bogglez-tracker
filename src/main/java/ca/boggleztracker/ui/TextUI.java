@@ -11,7 +11,6 @@
  */
 package ca.boggleztracker.ui;
 
-import ca.boggleztracker.model.ChangeRequest;
 import ca.boggleztracker.model.ScenarioManager;
 
 public class TextUI {
@@ -49,16 +48,16 @@ public class TextUI {
      */
     //---
     public void start() {
-        TextMenu.MenuEntry[] menuEntries = new TextMenu.MenuEntry[]{
-                new TextMenu.MenuEntry("Requester.", this::reportsMenu),
-                new TextMenu.MenuEntry("Issue.", this::issueMenu),
-                new TextMenu.MenuEntry("Product.", this::productMenu),
-                new TextMenu.MenuEntry("Reports.", this::reportsMenu),
-                new TextMenu.MenuEntry("Exit.", this::exitSystem)
+        TextMenu.MenuEntry[] menuEntries = new TextMenu.MenuEntry[] {
+                new TextMenu.MenuEntry("Requester", this::requesterMenu),
+                new TextMenu.MenuEntry("Issue", this::issueMenu),
+                new TextMenu.MenuEntry("Product", this::productMenu),
+                new TextMenu.MenuEntry("Reports", this::reportsMenu),
+                new TextMenu.MenuEntry("Exit", this::exitSystem)
         };
 
         boolean menuToRepeat = true;
-        TextMenu mainMenu = new TextMenu("Main Menu", menuToRepeat, menuEntries);
+        TextMenu mainMenu = new TextMenu("==Main Menu==", menuToRepeat, menuEntries);
         mainMenu.doMenu();
     }
 
@@ -67,7 +66,16 @@ public class TextUI {
      * Use the TextMenu class to create a requester menu and manage interactions.
      */
     //---
-    public void RequesterMenu() { System.out.println("Requester Sub Menu"); }
+    public void requesterMenu() {
+        TextMenu.MenuEntry[] menuEntries = new TextMenu.MenuEntry[] {
+                new TextMenu.MenuEntry("Create New Requester", this::doAddRequester),
+                new TextMenu.MenuEntry("Return to Main Menu", null)
+        };
+
+        boolean menuToRepeat = true;
+        TextMenu issueMenu = new TextMenu("==Requester==", menuToRepeat, menuEntries);
+        issueMenu.doMenu();
+    }
 
     //-----------------------------
     /**
@@ -83,7 +91,15 @@ public class TextUI {
      */
     //---
     public void issueMenu() {
-        System.out.println("Issue Sub Menu");
+        TextMenu.MenuEntry[] menuEntries = new TextMenu.MenuEntry[] {
+                new TextMenu.MenuEntry("Report an Issue", this::doAddChangeRequest),
+                new TextMenu.MenuEntry("Modify Existing Issue", this::doModifyIssue),
+                new TextMenu.MenuEntry("Return to Main Menu", null)
+        };
+
+        boolean menuToRepeat = true;
+        TextMenu issueMenu = new TextMenu("==Issue==", menuToRepeat, menuEntries);
+        issueMenu.doMenu();
     }
 
     //-----------------------------
@@ -114,7 +130,16 @@ public class TextUI {
      */
     //---
     public void productMenu() {
-        System.out.println("Product Sub Menu");
+        TextMenu.MenuEntry[] menuEntries = new TextMenu.MenuEntry[] {
+                new TextMenu.MenuEntry("Create New Product", this::doAddProduct),
+                new TextMenu.MenuEntry("Create New Product Release", this::doAddRelease),
+                new TextMenu.MenuEntry("Update Product Release", this::doModifyRelease),
+                new TextMenu.MenuEntry("Return to Main Menu", null)
+        };
+
+        boolean menuToRepeat = true;
+        TextMenu issueMenu = new TextMenu("==Product==", menuToRepeat, menuEntries);
+        issueMenu.doMenu();
     }
 
     //-----------------------------
@@ -145,7 +170,15 @@ public class TextUI {
      */
     //---
     public void reportsMenu() {
-        System.out.println("Reports Sub Menu");
+        TextMenu.MenuEntry[] menuEntries = new TextMenu.MenuEntry[] {
+                new TextMenu.MenuEntry("Report for Pending Change Items of a Product", this::listPendingChanges),
+                new TextMenu.MenuEntry("Report for Requester/Staff Notification", this::listPendingChanges),
+                new TextMenu.MenuEntry("Return to Main Menu", null)
+        };
+
+        boolean menuToRepeat = true;
+        TextMenu issueMenu = new TextMenu("==Reports==", menuToRepeat, menuEntries);
+        issueMenu.doMenu();
     }
 
     //-----------------------------
@@ -153,10 +186,7 @@ public class TextUI {
      * Provides the user interaction to display report of all pending change items for a product.
      */
     //---
-    public void listPendingChanges() {
-        String product = selectProduct();
-
-    }
+    public void listPendingChanges() {}
 
     //-----------------------------
     /**
@@ -206,7 +236,7 @@ public class TextUI {
      */
     //---
     public void exitSystem() {
-        // manager.closeFile();
-        TextMenu.setShouldRepeat(false);
+        manager.closeFiles();
+        TextMenu.setShouldMainMenuRepeat(false);
     }
 }
