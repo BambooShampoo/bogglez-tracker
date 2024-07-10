@@ -6,6 +6,7 @@
  * - 2024-07-03: Added toString() method for printing
  * - 2024-07-06: writeChangeItem implementation
  * - 2024-07-08: readChangeItem implementation
+ * - 2024-07-09: moved generateRandomChangeID to Scenario Manager and made empty constructor for changeItem
  * Purpose:
  * ChangeItem class represents a change item of a particular product release and is responsible for
  * managing the change requests of the change item. The class stores data such as changeID, priority
@@ -43,32 +44,22 @@ public class ChangeItem {
 
     //-----------------------------
     /**
-     * Six argument constructor for ChangeItem. Change ID is randomly generated, using
-     * utility function generateRandomChangeID().
-     *
-     * @param productName (in) String - Product of change  is referencing to.
-     * @param releaseID (in) String - Release ID change is referencing to.
-     * @param changeDescription (in) String - Description of change item.
-     * @param priority (in) int - Priority of the change item (1 - 5).
-     * @param status (in) String - status of the change item.
-     *               (Open, Assessed, In Progress, Completed, Cancelled).
-     * @param anticipatedReleaseDate - Anticipated release date of the change item.
+     * blank contructor for creating a ChangeItem.
      */
     //---
-    public ChangeItem(String productName, String releaseID, String changeDescription, int priority,
-                      String status, LocalDate anticipatedReleaseDate) {
-        this.changeID = generateRandomChangeID();
-        this.productName = ScenarioManager.padCharArray(productName.toCharArray(), Product.MAX_PRODUCT_NAME);
-        this.releaseID = ScenarioManager.padCharArray(releaseID.toCharArray(), Release.MAX_RELEASE_ID);
-        this.changeDescription = ScenarioManager.padCharArray(changeDescription.toCharArray(), MAX_DESCRIPTION);
-        this.priority = priority;
-        this.status = ScenarioManager.padCharArray(status.toCharArray(), MAX_STATUS);
-        this.anticipatedReleaseDate = anticipatedReleaseDate;
+    public ChangeItem() {
+        this.changeID = 0;
+        this.productName = new char[10];
+        this.releaseID = new char[8];
+        this.changeDescription = new char[MAX_DESCRIPTION];
+        this.priority = 0;
+        this.status = new char[MAX_STATUS];
+        this.anticipatedReleaseDate = LocalDate.of(2000, 1, 1);
     }
 
     //-----------------------------
     /**
-     * Six argument constructor for creating a "modifed" ChangeItem.
+     * Seven argument constructor for creating a "modifed" ChangeItem.
      *
      * @param changeID (in) int - change ID of the change item.
      * @param productName (in) String - Product of change  is referencing to.
@@ -94,16 +85,6 @@ public class ChangeItem {
     //=============================
     // Methods
     //=============================
-
-    //-----------------------------
-    /**
-     * Generates a random change ID upon instantiation of object.
-     * @return (out) int - random generated change ID.
-     */
-    //---
-    private int generateRandomChangeID() {
-        return 1; //temporary
-    }
 
     //-----------------------------
     /**
