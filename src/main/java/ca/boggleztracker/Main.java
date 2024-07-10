@@ -17,6 +17,7 @@ import ca.boggleztracker.ui.TextUI;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.function.LongConsumer;
 
 public class Main {
     //=============================
@@ -36,11 +37,6 @@ public class Main {
 
             //ui.start();
             manager.readAllChangeItem();
-            ChangeItem testChangeItem = new ChangeItem("BOGGLEZ", "v1.0", "Error on Search Bar", 1,
-            "Open", LocalDate.of(2024,7,6));
-            manager.modifyChangeItem(1,testChangeItem);
-            Release testRelease = new Release("BOGGLEZ","v1.1", LocalDate.of(2024,6,5));
-            manager.modifyRelease("v1.0    ",testRelease);
             manager.readAllChangeItem();
 
 

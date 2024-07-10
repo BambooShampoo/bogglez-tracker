@@ -17,6 +17,7 @@ class ChangeItemTest {
     //=============================
     // Member fields
     //=============================
+    public int changeID = 0;
     public String releaseID = "v1.0";
     public String productName = "mySoftware";
     public String changeDescription = "Menu not populating";
@@ -35,7 +36,7 @@ class ChangeItemTest {
 *  Precondition: UnitTest01Text.dat contains no records.
  */
     void createANewChangeItem() {
-        ChangeItem changeItem = new ChangeItem(releaseID, productName, changeDescription,
+        ChangeItem changeItem = new ChangeItem(changeID, releaseID, productName, changeDescription,
                 priority, status, anticipatedReleaseDate);
         System.out.println(changeItem.toString());
     }
@@ -45,7 +46,7 @@ class ChangeItemTest {
 *   Precondition: UnitTest01Text.dat contains no records.
 */
     void testFileWriting() {
-        ChangeItem changeItem = new ChangeItem(releaseID, productName, changeDescription,
+        ChangeItem changeItem = new ChangeItem(changeID,releaseID, productName, changeDescription,
                 priority, status, anticipatedReleaseDate);
         try {
             RandomAccessFile myFile = new RandomAccessFile(filename, "rw");
@@ -62,7 +63,7 @@ class ChangeItemTest {
 *                 earlier (can be done by running the previous test)
  */
     void testFileReading() {
-        ChangeItem changeItem = new ChangeItem(releaseID, productName, changeDescription,
+        ChangeItem changeItem = new ChangeItem(changeID,releaseID, productName, changeDescription,
                 priority, status, anticipatedReleaseDate);
         try {
             RandomAccessFile myFile = new RandomAccessFile(filename, "r");
