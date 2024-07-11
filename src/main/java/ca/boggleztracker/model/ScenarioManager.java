@@ -6,7 +6,8 @@
  * - 2024-07-04: Created individual RandomAccessFiles for each file, opened on start and closed on system shut down.
  * - 2024-07-08: Completed add methods
  * - 2024-07-08: read helper methods
- * - 2024-07-09: implmented modify changeItem, modify release, and generateRandomChangeID
+ * - 2024-07-09: implemented modify changeItem, modify release, and generateRandomChangeID
+ * - 2024-07-10: implemented modified add requester to check if email already exists
  * Purpose:
  * ScenarioManager class is responsible for opening and closing the data file,
  * populating the array lists of products and requesters, and supports various interactions
@@ -163,10 +164,16 @@ public class ScenarioManager {
      */
     //---
     public void addRequester(String email, String name, long phoneNumber, String department) {
-        Requester requester = new Requester(email, name, phoneNumber, department);
         try {
-            requesterFile.seek(requesterFile.length());
-            requester.writeRequester(requesterFile);
+            boolean requesterExists = Requester.requesterExists(requesterFile, email);
+            if (!requesterExists) {
+                Requester requester = new Requester(email, name, phoneNumber, department);
+                requesterFile.seek(requesterFile.length());
+                requester.writeRequester(requesterFile);
+                System.out.println("The new requester is successfully added.");
+            } else {
+                System.out.println("Error: requester email already exists");
+            }
         } catch (IOException e) {
             System.err.println("Error writing requester to file " + e.getMessage());
         }
@@ -392,6 +399,20 @@ public class ScenarioManager {
             while (true) {
                 change.readChangeItems(changeItemFile);
                 System.out.println(change);
+            }
+        } catch (EOFException e) {
+            System.out.println("\n");
+        }
+    }
+
+    // ****temporary testing method - delete later.
+    public void readAllRequesters() throws IOException {
+        Requester r = new Requester();
+        requesterFile.seek(0);
+        try {
+            while (true) {
+                r.readRequester(requesterFile);
+                System.out.println(r);
             }
         } catch (EOFException e) {
             System.out.println("\n");

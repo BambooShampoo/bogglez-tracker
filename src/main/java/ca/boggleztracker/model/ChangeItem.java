@@ -157,4 +157,6 @@ public class ChangeItem {
                 "Status: " + new String(status) + "\n" +
                 "Anticipated Release Date: " + anticipatedReleaseDate.format(formatter);
     }
+
+
 }

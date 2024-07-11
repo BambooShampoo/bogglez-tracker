@@ -3,6 +3,8 @@
  * Revision History:
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-02: System redesign remove storing records into RAM
+ * - 2024-07-09: implemented sub menu display methods
+ * - 2024-07-10: implemented add requester user interaction
  * Purpose:
  * TextUI class is responsible for managing the user interface (UI) of the bug tracker
  * application. The class creates TextMenu objects and handles the different
@@ -11,7 +13,11 @@
  */
 package ca.boggleztracker.ui;
 
+import ca.boggleztracker.model.InputValidator;
+import ca.boggleztracker.model.Requester;
 import ca.boggleztracker.model.ScenarioManager;
+
+import java.util.Scanner;
 
 public class TextUI {
     //=============================
@@ -83,7 +89,102 @@ public class TextUI {
      * from the customer, the system will check if it already exists.
      */
     //---
-    public void doAddRequester() {}
+    public void doAddRequester() {
+        // anonymous classes that implement the InputValidator interface
+        // these are passed to the getUserInputString to determine length checking
+        // (Strategy Pattern)
+        InputValidator maxLengthValidator = (input, length) -> input.length() <= length;
+        InputValidator exactLengthValidator = (input, length) -> input.length() == length;
+
+        // requester name user input
+        System.out.println("Enter requester name (length: 30 max)");
+        String name = getStringUserInput(Requester.MAX_NAME, maxLengthValidator);
+
+        // requester phone user input
+        System.out.println("Enter requester phone number (length: 11)");
+        long phoneNumber = Long.parseLong(getStringUserInput(Requester.PHONE_NUMBER_LENGTH, exactLengthValidator));
+
+        // requester email user input
+        System.out.println("Enter requester email (length: 24 max)");
+        String email = getStringUserInput(Requester.MAX_EMAIL, maxLengthValidator);
+
+        // requester department user input
+        String department = getValidDepartmentUserInput(maxLengthValidator);
+
+        // confirmation of creation
+        System.out.println("Confirming entry of " + name + "?" + " (Y/N)");
+        if (getYesOrNoUserInput()) {
+            manager.addRequester(email, name, phoneNumber, department);
+        }
+        System.out.println("Do you wish to add another requester? (Y/N)");
+        if (getYesOrNoUserInput()) {
+            doAddRequester();
+        }
+    }
+
+    /**
+     * Helper method that validates the department of user input.
+     *
+     * @param validator (in) InputValidator - The input validator for length checking.
+     * @return (out) String - A valid department.
+     */
+    public String getValidDepartmentUserInput(InputValidator validator) {
+        System.out.println("Enter requester department (QA/M/PD/S/'')");
+        String department = "";
+        boolean departmentValid = false;
+        while (!departmentValid) {
+            department = getStringUserInput(Requester.MAX_DEPARTMENT, validator);
+            departmentValid = department.equals("QA") || department.equals("M")
+                    || department.equals("PD") || department.equals("S")
+                    || department.isEmpty();
+            if (!departmentValid) {
+                System.out.println("Error: Please enter a valid department");
+            }
+        }
+        return department;
+    }
+
+    /**
+     * Helper method that gets the user input, it supports length checking.
+     *
+     * @param length (in) int - length of string for validation.
+     * @param validator (in) InputValidator - The input validator for length checking.
+     * @return (out) String - A valid user input.
+     */
+    public String getStringUserInput(int length, InputValidator validator) {
+        Scanner keyboard = new Scanner(System.in);
+        String input;
+        System.out.print("> ");
+        input = keyboard.nextLine();
+        while (!validator.isValid(input, length)) {
+            System.out.println("Error: Please enter valid input length");
+            System.out.print("> ");
+            input = keyboard.nextLine();
+        }
+        return input;
+    }
+
+    /**
+     * Helper method that determines if user selects yes or no.
+     * @return (out) boolean - yes or no flag.
+     */
+    public boolean getYesOrNoUserInput() {
+        Scanner keyboard = new Scanner(System.in);
+        boolean isValid;
+        boolean inputYesOrNo;
+        while (true) {
+            String input = keyboard.nextLine().toLowerCase();
+            isValid = input.equals("y") || input.equals("n");
+            if (!isValid) {
+                System.out.println("Error: Please enter Y or N");
+                System.out.print("> ");
+            } else {
+                inputYesOrNo = input.equals("y");
+                break;
+            }
+        }
+        return inputYesOrNo;
+    }
 
     //-----------------------------
     /**

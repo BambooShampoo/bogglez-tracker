@@ -5,14 +5,17 @@
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-06: writeRequester implementation
  * - 2024-07-08: readRequester implementation
+ * - 2024-07-10: requesterExists implementation
  * Purpose:
  * Requester class represents a requester in the system, storing data such as email,
  * name, phone number, and department.
  */
 package ca.boggleztracker.model;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 
 public class Requester {
     //=============================
@@ -21,6 +24,7 @@ public class Requester {
     public static final int MAX_EMAIL = 24;
     public static final int MAX_NAME = 30;
     public static final int MAX_DEPARTMENT = 2;
+    public static final int PHONE_NUMBER_LENGTH = 11;
     public static final long BYTES_SIZE_REQUESTER = 120;
 
     //=============================
@@ -34,6 +38,15 @@ public class Requester {
     //=============================
     // Constructors
     //=============================
+
+    //-----------------------------
+    /**
+     * Default constructor for Requester
+     */
+    //---
+    public Requester() {
+    }
+
 
     //-----------------------------
     /**
@@ -56,6 +69,16 @@ public class Requester {
     // Methods
     //=============================
 
+    //-----------------------------
+    /**
+     * Getter method for Requester email char array.
+     *
+     * @return (out) char[] - email char array of requester.
+     */
+    //---
+    public char[] getEmail() {
+        return email;
+    }
 
     //-----------------------------
     /**
@@ -80,7 +103,22 @@ public class Requester {
      * @param email (in) String - The email to be checked.
      */
     //---
-    public static boolean requesterExists(RandomAccessFile file, String email) { return false; }
+    public static boolean requesterExists(RandomAccessFile file, String email) throws IOException {
+        Requester requester = new Requester();
+        boolean requesterExists = false;
+        char[] temp = ScenarioManager.padCharArray(email.toCharArray(), MAX_EMAIL);
+        file.seek(0);
+        try {
+            while (true) {
+                requester.readRequester(file);
+                if (Arrays.equals(temp, requester.getEmail())) {
+                    requesterExists = true;
+                }
+            }
+        } catch (EOFException e) {
+            return requesterExists;
+        }
+    }
 
     //-----------------------------
     /**
@@ -94,5 +132,16 @@ public class Requester {
         name = ScenarioManager.readCharsFromFile(file, Requester.MAX_NAME);
         phoneNumber = file.readLong();
         department = ScenarioManager.readCharsFromFile(file, Requester.MAX_DEPARTMENT);
+    }
+
+    // tmeporary
+    @Override
+    public String toString() {
+        return "Requester{" +
+                "email=" + Arrays.toString(email) +
+                ", name=" + Arrays.toString(name) +
+                ", phoneNumber=" + phoneNumber +
+                ", department=" + Arrays.toString(department) +
+                '}';
     }
 }
