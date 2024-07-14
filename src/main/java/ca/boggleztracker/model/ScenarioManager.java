@@ -17,8 +17,10 @@ package ca.boggleztracker.model;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class ScenarioManager {
     //=============================
@@ -30,6 +32,10 @@ public class ScenarioManager {
     private static final String CHANGE_ITEM_FILE = "change-item.dat";
     private static final String CHANGE_REQUEST_FILE = "change-request.dat";
     private static final int LOCAL_DATE_LENGTH = 10;
+    public static final int MAX_EMAIL = 24;
+    public static final int MAX_NAME = 30;
+    public static final int MAX_DEPARTMENT = 2;
+    public static final long BYTES_SIZE_REQUESTER = 120;
 
     //=============================
     // Member fields
@@ -39,6 +45,8 @@ public class ScenarioManager {
     private RandomAccessFile releaseFile;
     private RandomAccessFile changeItemFile;
     private RandomAccessFile changeRequestFile;
+    private int requesterBytes = 120;
+    public ArrayList<Requester> requesterArray = new ArrayList<Requester>;
 
     //=============================
     // Constructor
@@ -292,8 +300,45 @@ public class ScenarioManager {
      * @param pageSize (in) int - How many items of data each page can hold.
      */
     //---
-    public String generateRequesterPage(int page, int pageSize) {
-        return "";
+    public ArrayList<Requester> generateRequesterPage(int page, int pageSize) {
+
+        // fields, char array versions are not exactly needed but help with debugging
+        // can do email = new String(reachCharsFromFile(releaseFile, MAX_EMAIL)); instead later
+        String email = "";
+        char[] emailArr;
+        String name = "";
+        char[] nameArr;
+        long phoneNumber = 0;
+        String department = "";
+        char[] departmentArr;
+        long startingPage = page * pageSize * BYTES_SIZE_REQUESTER;
+
+
+        try {
+            releaseFile.seek(startingPage);
+        } catch (IOException e) {
+            System.err.println("Error in finding requester page" + e.getMessage());
+        }
+
+        for (int i = 0; i < 6; i++) {
+            try {
+                emailArr = readCharsFromFile(releaseFile, MAX_EMAIL);
+                email = new String(emailArr);
+                nameArr = readCharsFromFile(releaseFile, MAX_NAME);
+                name = new String(nameArr);
+                phoneNumber = readLong();
+                departmentArr = readCharsFromFile(releaseFile, MAX_DEPARTMENT);
+                department = new String(departmentArr);
+
+                thisRequester = new Requester(email, name, phoneNumber, department);
+                requesterArray.add(thisRequester);
+            } catch (IOException e) {
+                System.err.println("Error in reading from file" + e.getMessage());
+            } catch (EOFException e) {
+                break; // catch EOF and break out of loop
+            }
+        }
+        return requesterArray;
     }
 
     //-----------------------------
@@ -334,7 +379,7 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
-     * Get s a list of all pending change items of a specificproduct.
+     * Get s a list of all pending change items of a specific product.
      *
      * @param productName (in) String - Product name reference to find all pending changes.
      */
