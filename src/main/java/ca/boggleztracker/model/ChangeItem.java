@@ -17,7 +17,7 @@ package ca.boggleztracker.model;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 public class ChangeItem {
     //=============================
@@ -34,7 +34,7 @@ public class ChangeItem {
     private char[] productName;
     private char[] releaseID;
     private char[] changeDescription;
-    private int priority;
+    private char priority;
     private char[] status;
     private LocalDate anticipatedReleaseDate;
 
@@ -44,22 +44,14 @@ public class ChangeItem {
 
     //-----------------------------
     /**
-     * blank contructor for creating a ChangeItem.
+     * Default constructor for creating a ChangeItem.
      */
     //---
-    public ChangeItem() {
-        this.changeID = 0;
-        this.productName = new char[10];
-        this.releaseID = new char[8];
-        this.changeDescription = new char[MAX_DESCRIPTION];
-        this.priority = 0;
-        this.status = new char[MAX_STATUS];
-        this.anticipatedReleaseDate = LocalDate.of(2000, 1, 1);
-    }
+    public ChangeItem() {}
 
     //-----------------------------
     /**
-     * Seven argument constructor for creating a "modifed" ChangeItem.
+     * Seven argument constructor for creating a "modified" ChangeItem.
      *
      * @param changeID (in) int - change ID of the change item.
      * @param productName (in) String - Product of change  is referencing to.
@@ -72,7 +64,7 @@ public class ChangeItem {
      */
     //---
     public ChangeItem(int changeID, String productName, String releaseID, String changeDescription,
-                      int priority, String status, LocalDate anticipatedReleaseDate) {
+                      char priority, String status, LocalDate anticipatedReleaseDate) {
         this.changeID = changeID;
         this.productName = ScenarioManager.padCharArray(productName.toCharArray(), Product.MAX_PRODUCT_NAME);
         this.releaseID = ScenarioManager.padCharArray(releaseID.toCharArray(), Release.MAX_RELEASE_ID);
@@ -108,24 +100,15 @@ public class ChangeItem {
         file.writeChars(new String(productName));
         file.writeChars(new String(releaseID));
         file.writeChars(new String(changeDescription));
-        file.writeInt(priority);
+        file.writeChar(priority);
         file.writeChars(new String(status));
-        file.writeChars(anticipatedReleaseDate.toString()); // format to yyyy-mm-dd (20 bytes)
-        System.out.println("Change Item: " + file.length());
-    }
 
-    //-----------------------------
-    /**
-     * Checks file to see if exact permutation of the 3 ChangeItem parameters already exists.
-     *
-     * @param file (in) RandomAccessFile - The file to read from.
-     * @param priority (in) int - Priority of the change item (1 - 5)
-     * @param status (in) String - status of the change item
-     *               (Open, Assessed, In Progress, Completed, Cancelled).
-     * @param anticipatedReleaseDate - Anticipated release date of the change item.
-     */
-    //---
-    public static boolean changeItemExists(RandomAccessFile file, int priority, String status, LocalDate anticipatedReleaseDate) { return false; }
+        if (anticipatedReleaseDate == null) {
+            file.writeChars("          ");
+        } else {
+            file.writeChars(anticipatedReleaseDate.toString()); // format to yyyy-mm-dd (20 bytes)
+        }
+    }
 
     //-----------------------------
     /**
@@ -139,24 +122,27 @@ public class ChangeItem {
         productName = ScenarioManager.readCharsFromFile(file, Product.MAX_PRODUCT_NAME);
         releaseID = ScenarioManager.readCharsFromFile(file, Release.MAX_RELEASE_ID);
         changeDescription = ScenarioManager.readCharsFromFile(file, MAX_DESCRIPTION);
-        priority = file.readInt();
+        priority = file.readChar();
         status = ScenarioManager.readCharsFromFile(file, MAX_STATUS);
         anticipatedReleaseDate = ScenarioManager.readDateFromFile(file);
     }
     //---
 
+    /**
+     * Utility method to print out contents of change request
+     *
+     * @return (out) String - change request object
+     */
     @Override
     public String toString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return "Change Details:\n" +
-                "Change ID: " + changeID + "\n" +
-                "Product Name: " + new String(productName) + "\n" +
-                "Release ID: " + new String(releaseID) + "\n" +
-                "Change Description: " + new String(changeDescription) + "\n" +
-                "Priority: " + priority + "\n" +
-                "Status: " + new String(status) + "\n" +
-                "Anticipated Release Date: " + anticipatedReleaseDate.format(formatter);
+        return "ChangeItem{" +
+                "changeID=" + changeID +
+                ", productName=" + Arrays.toString(productName) +
+                ", releaseID=" + Arrays.toString(releaseID) +
+                ", changeDescription=" + Arrays.toString(changeDescription) +
+                ", priority=" + priority +
+                ", status=" + Arrays.toString(status) +
+                ", anticipatedReleaseDate=" + anticipatedReleaseDate +
+                '}';
     }
-
-
 }

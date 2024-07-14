@@ -8,6 +8,7 @@
  * - 2024-07-08: read helper methods
  * - 2024-07-09: implemented modify changeItem, modify release, and generateRandomChangeID
  * - 2024-07-10: implemented modified add requester to check if email already exists
+ * - 2024-07-13: implemented all add methods with uniqueness check
  * Purpose:
  * ScenarioManager class is responsible for opening and closing the data file,
  * populating the array lists of products and requesters, and supports various interactions
@@ -37,15 +38,21 @@ public class ScenarioManager {
     //=============================
     // Member fields
     //=============================
-    private RandomAccessFile requesterFile;
-    private RandomAccessFile productFile;
-    private RandomAccessFile releaseFile;
-    private RandomAccessFile changeItemFile;
-    private RandomAccessFile changeRequestFile;
+    private final RandomAccessFile requesterFile;
+    private final RandomAccessFile productFile;
+    private final RandomAccessFile releaseFile;
+    private final RandomAccessFile changeItemFile;
+    private final RandomAccessFile changeRequestFile;
 
     //=============================
     // Constructor
     //=============================
+
+    //-----------------------------
+    /**
+     * Default construction for scenario manager, opens all files.
+     */
+    //---
     public ScenarioManager() throws IOException {
         requesterFile = new RandomAccessFile(REQUESTER_FILE, "rw");
         productFile = new RandomAccessFile(PRODUCT_FILE, "rw");
@@ -148,7 +155,12 @@ public class ScenarioManager {
     //---
     public static LocalDate readDateFromFile(RandomAccessFile file) throws IOException {
         char[] temp = readCharsFromFile(file, LOCAL_DATE_LENGTH);
-        String date = new String(temp);
+        String date = new String(temp).trim(); // remove white spaces
+
+        if (date.isEmpty()) {
+            return null;
+        }
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return LocalDate.parse(date, formatter);
     }
@@ -166,6 +178,7 @@ public class ScenarioManager {
     public void addRequester(String email, String name, long phoneNumber, String department) {
         try {
             boolean requesterExists = Requester.requesterExists(requesterFile, email);
+
             if (!requesterExists) {
                 Requester requester = new Requester(email, name, phoneNumber, department);
                 requesterFile.seek(requesterFile.length());
@@ -187,10 +200,17 @@ public class ScenarioManager {
      */
     //---
     public void addProduct(String productName) {
-        Product product = new Product(productName);
         try {
-            productFile.seek(productFile.length());
-            product.writeProduct(productFile);
+            boolean productExists = Product.productExists(productFile, productName);
+
+            if (!productExists) {
+                Product product = new Product(productName);
+                productFile.seek(productFile.length());
+                product.writeProduct(productFile);
+                System.out.println("The new product has been added.");
+            } else {
+                System.out.println("Error: product name already exists");
+            }
         } catch (IOException e) {
             System.err.println("Error writing product to file " + e.getMessage());
         }
@@ -231,12 +251,12 @@ public class ScenarioManager {
      * @param anticipatedReleaseDate (in) LocalDate - Date of anticipated release date.
      */
     //---
-    public void addChangeItem(String productName, String releaseID, String changeDescription, int priority,
-                              String status, LocalDate anticipatedReleaseDate) throws IOException {
-        int changeID = generateRandomChangeID();
-        ChangeItem changeItem = new ChangeItem(changeID,productName, releaseID, changeDescription,
-                priority, status, anticipatedReleaseDate);
+    public void addChangeItem(String productName, String releaseID, String changeDescription, char priority,
+                              String status, LocalDate anticipatedReleaseDate) {
         try {
+            int changeID = generateRandomChangeID();
+            ChangeItem changeItem = new ChangeItem(changeID, productName, releaseID, changeDescription,
+                    priority, status, anticipatedReleaseDate);
             changeItemFile.seek(changeItemFile.length());
             changeItem.writeChangeItem(changeItemFile);
         } catch (IOException e) {
@@ -284,7 +304,7 @@ public class ScenarioManager {
      */
     //---
     public void modifyRelease(String releaseID, Release modifiedRelease) {
-        Release fileRelease = new Release("","",LocalDate.of(2000, 1 ,1));
+        Release fileRelease = new Release();
         int pos = 0;
 
         try {
@@ -292,7 +312,9 @@ public class ScenarioManager {
             // locate correct Release from file
             while (true){
                 fileRelease.readRelease(releaseFile);
-                if (releaseID.equals(fileRelease.getReleaseID())){
+                // convert char[] to String
+                String releaseIDToBeChanged = String.valueOf(fileRelease.getReleaseID()).trim();
+                if (releaseID.equals(releaseIDToBeChanged)) {
                     break;
                 }
                 pos += Release.BYTES_SIZE_RELEASE;
@@ -314,10 +336,17 @@ public class ScenarioManager {
      */
     //---
     public void addRelease(String productName, String releaseID, LocalDate date) {
-        Release release = new Release(productName, releaseID, date);
         try {
-            releaseFile.seek(releaseFile.length());
-            release.writeRelease(releaseFile);
+            boolean releaseExists = Release.releaseExists(releaseFile, releaseID);
+
+            if (!releaseExists) {
+                Release release = new Release(productName, releaseID, date);
+                releaseFile.seek(releaseFile.length());
+                release.writeRelease(releaseFile);
+                System.out.println("The new release ID has been added.");
+            } else {
+                System.out.println("Error: release ID already exists");
+            }
         } catch (IOException e) {
             System.err.println("Error writing release to file " + e.getMessage());
         }
@@ -412,6 +441,48 @@ public class ScenarioManager {
         try {
             while (true) {
                 r.readRequester(requesterFile);
+                System.out.println(r);
+            }
+        } catch (EOFException e) {
+            System.out.println("\n");
+        }
+    }
+
+    // ****temporary testing method - delete later.
+    public void readAllProducts() throws IOException {
+        Product p = new Product();
+        productFile.seek(0);
+        try {
+            while (true) {
+                p.readProduct(productFile);
+                System.out.println(p);
+            }
+        } catch (EOFException e) {
+            System.out.println("\n");
+        }
+    }
+
+    // ****temporary testing method - delete later.
+    public void readAllReleases() throws IOException {
+        Release r = new Release();
+        releaseFile.seek(0);
+        try {
+            while (true) {
+                r.readRelease(releaseFile);
+                System.out.println(r);
+            }
+        } catch (EOFException e) {
+            System.out.println("\n");
+        }
+    }
+
+    // ****temporary testing method - delete later.
+    public void readAllChangeRequests() throws IOException {
+        ChangeRequest r = new ChangeRequest();
+        changeRequestFile.seek(0);
+        try {
+            while (true) {
+                r.readChangeRequest(changeRequestFile);
                 System.out.println(r);
             }
         } catch (EOFException e) {

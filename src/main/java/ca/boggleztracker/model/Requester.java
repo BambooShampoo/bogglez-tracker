@@ -92,7 +92,6 @@ public class Requester {
         file.writeChars(new String(name));
         file.writeLong(phoneNumber);
         file.writeChars(new String(department));
-        System.out.println("Requester: " + file.length());
     }
 
     //-----------------------------
@@ -134,7 +133,13 @@ public class Requester {
         department = ScenarioManager.readCharsFromFile(file, Requester.MAX_DEPARTMENT);
     }
 
-    // tmeporary
+    //-----------------------------
+    /**
+     * Utility method to print out contents of requester
+     *
+     * @return (out) String - requester object
+     */
+    //---
     @Override
     public String toString() {
         return "Requester{" +
