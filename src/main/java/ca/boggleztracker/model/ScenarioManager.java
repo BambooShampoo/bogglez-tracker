@@ -9,6 +9,7 @@
  * - 2024-07-09: implemented modify changeItem, modify release, and generateRandomChangeID
  * - 2024-07-10: implemented modified add requester to check if email already exists
  * - 2024-07-13: implemented all add methods with uniqueness check
+ * - 2024-07-14: implemented generateRequesterPage method
  * Purpose:
  * ScenarioManager class is responsible for opening and closing the data file,
  * populating the array lists of products and requesters, and supports various interactions
@@ -50,7 +51,11 @@ public class ScenarioManager {
     private final RandomAccessFile changeItemFile;
     private final RandomAccessFile changeRequestFile;
     private int requesterBytes = 120;
-    public ArrayList<Requester> requesterArray = new ArrayList<Requester>;
+    public ArrayList<Requester> requesterArray = new ArrayList<Requester>();
+    public ArrayList<Product> productArray = new ArrayList<Product>();
+    public ArrayList<Release> releaseArray = new ArrayList<Release>();
+    public ArrayList<ChangeItem> changeItemArray = new ArrayList<ChangeItem>();
+    // pending changes and completed changes can go to change item array
 
     //=============================
     // Constructor
@@ -394,16 +399,14 @@ public class ScenarioManager {
                 email = new String(emailArr);
                 nameArr = readCharsFromFile(releaseFile, MAX_NAME);
                 name = new String(nameArr);
-                phoneNumber = readLong();
+                phoneNumber = releaseFile.readLong();
                 departmentArr = readCharsFromFile(releaseFile, MAX_DEPARTMENT);
                 department = new String(departmentArr);
 
-                thisRequester = new Requester(email, name, phoneNumber, department);
+                Requester thisRequester = new Requester(email, name, phoneNumber, department);
                 requesterArray.add(thisRequester);
             } catch (IOException e) {
                 System.err.println("Error in reading from file" + e.getMessage());
-            } catch (EOFException e) {
-                break; // catch EOF and break out of loop
             }
         }
         return requesterArray;
@@ -417,8 +420,8 @@ public class ScenarioManager {
      * @param pageSize (in) int - How many items of data each page can hold.
      */
     //---
-    public String generateProductPage(int page, int pageSize) {
-        return "";
+    public ArrayList<Product> generateProductPage(int page, int pageSize) {
+        return productArray;
     }
 
     //-----------------------------
