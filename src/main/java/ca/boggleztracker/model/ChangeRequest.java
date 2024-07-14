@@ -5,7 +5,6 @@
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-06: writeChangeRequest implementation
  * - 2024-07-08: readChangeRequest implementation
- *
  * Purpose:
  * ChangeRequest class represents a change request of a product, storing data such as
  * reported date and the requester.
@@ -15,12 +14,14 @@ package ca.boggleztracker.model;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
+import java.util.Arrays;
 
 public class ChangeRequest {
     //=============================
     // Constants and static fields
     //=============================
     public static final int BYTES_SIZE_CHANGE_REQUEST = 108;
+
     //=============================
     // Member fields
     //=============================
@@ -30,9 +31,21 @@ public class ChangeRequest {
     private char[] requesterEmail;
     private LocalDate reportedDate;
 
+    //=============================
+    // Constructors
+    //=============================
+
     //-----------------------------
     /**
-     * Five argument constructor for ChangeRequest.
+     * Default constructor for change request.
+     */
+    //---
+    public ChangeRequest() {
+    }
+
+    //-----------------------------
+    /**
+     * Five argument constructor for change request.
      *
      * @param changeID (in) int - Identifier for the ChangeItem this request is for.
      * @param productName (in) String - Name of product of change request.
@@ -63,26 +76,9 @@ public class ChangeRequest {
         file.writeChars(new String(reportedRelease));
         file.writeChars(new String(requesterEmail));
         file.writeChars(reportedDate.toString()); // format to yyyy-mm-dd (20 bytes)
-        System.out.println("Change Request: " + file.length());
     }
 
     //-----------------------------
-    /**
-     * Checks file to see if exact permutation of the 5 ChangeRequest parameters already exists.
-     *
-     * @param file (in) RandomAccessFile - The file to read from.
-     * @param changeID (in) int - Identifier for the ChangeItem this request is for.
-     * @param productName (in) String - Name of product of change request.
-     * @param reportedRelease (in) String - Release version of the product
-     * @param requesterEmail (in) String - Email of the requester.
-     * @param reportedDate (in) LocalDate - Date of when the request was made.
-     */
-    //---
-    public static boolean changeRequestExists(RandomAccessFile file, int changeID, String productName,
-                                              String reportedRelease, String requesterEmail, LocalDate reportedDate) {
-        return false;
-    }
-
     /**
      * Reads individual change request record from file
      *
@@ -95,5 +91,23 @@ public class ChangeRequest {
         reportedRelease = ScenarioManager.readCharsFromFile(file, Release.MAX_RELEASE_ID);
         requesterEmail = ScenarioManager.readCharsFromFile(file, Requester.MAX_EMAIL);
         reportedDate = ScenarioManager.readDateFromFile(file);
+    }
+
+    //-----------------------------
+    /**
+     * Utility method to print out contents of change request
+     *
+     * @return (out) String - change request object
+     */
+    //---
+    @Override
+    public String toString() {
+        return "ChangeRequest{" +
+                "changeID=" + changeID +
+                ", productName=" + Arrays.toString(productName) +
+                ", reportedRelease=" + Arrays.toString(reportedRelease) +
+                ", requesterEmail=" + Arrays.toString(requesterEmail) +
+                ", reportedDate=" + reportedDate +
+                '}';
     }
 }

@@ -12,9 +12,9 @@ package ca.boggleztracker;
 
 import ca.boggleztracker.model.ScenarioManager;
 import ca.boggleztracker.ui.TextUI;
-
 import java.io.IOException;
 import java.time.LocalDate;
+
 
 public class Main {
     //=============================
@@ -31,13 +31,9 @@ public class Main {
         try {
             ScenarioManager manager = new ScenarioManager();
             TextUI ui = new TextUI(manager);
+          
+            ui.start();
 
-            //ui.start();
-            manager.addChangeItem("BOGGLEZ", "v1.0", "Error on search bar", 5, "Open", LocalDate.of(2024, 7, 6));
-            manager.addChangeItem("BOGGLEZ", "v2.0", "Error on file system", 4, "Closed", LocalDate.of(2024, 8, 7));
-            manager.readAllChangeItem();
-
-            manager.closeFiles();
         } catch (IOException e) {
             System.err.println("Error opening record files " + e.getMessage());
         }

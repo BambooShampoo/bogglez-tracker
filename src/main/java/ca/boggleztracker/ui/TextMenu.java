@@ -2,6 +2,7 @@
  * File: TextMenu.java
  * Revision History:
  * - 2024-06-29: Function and variable declarations
+ * - 2024-07-09: Modified getSelection() method
  * Purpose:
  * TextMenu class is responsible for displaying and handling user input of the various menus.
  * This class uses an array of MenuEntry objects to represent menu options and their
@@ -15,13 +16,15 @@ public class TextMenu {
     //=============================
     // Constants and Static Fields
     //=============================
-    private static boolean shouldRepeat;
+    private static final int MINIMUM_SELECTION_NUMBER = 1;
+    private boolean shouldRepeat;
+    private static boolean shouldMainMenuRepeat = true;
 
     //=============================
     // Member fields
     //=============================
-    private String title;
-    private MenuEntry[] entries;
+    private final String title;
+    private final MenuEntry[] entries;
 
     //=============================
     // Utility classes
@@ -36,8 +39,8 @@ public class TextMenu {
         //=============================
         // Member fields
         //=============================
-        private String text;
-        private MenuAction action;
+        private final String text;
+        private final MenuAction action;
 
         //=============================
         // Constructors
@@ -84,11 +87,12 @@ public class TextMenu {
 
     //-----------------------------
     /**
-     * Static method that sets the shouldRepeat boolean.
+     * Static method to set if the main menu should repeat. Special case called
+     * in TextUI's exit system method.
      */
     //---
-    public static void setShouldRepeat(boolean shouldRepeat) {
-        TextMenu.shouldRepeat = shouldRepeat;
+    public static void setShouldMainMenuRepeat(boolean shouldMainMenuRepeat) {
+        TextMenu.shouldMainMenuRepeat = shouldMainMenuRepeat;
     }
 
     //=============================
@@ -106,10 +110,13 @@ public class TextMenu {
             int option = getSelection();
             MenuAction action = entries[option - 1].action;
 
-            if (action == null) {
-                shouldRepeat = false;
-            } else {
+            if (action != null) {
                 action.performAction();
+            } else {
+                shouldRepeat = false;
+            }
+            if (!shouldMainMenuRepeat) {
+                shouldRepeat = false;
             }
         } while (shouldRepeat);
     }
@@ -120,8 +127,33 @@ public class TextMenu {
      */
     //---
     public int getSelection() {
+        return getNumberBetween(MINIMUM_SELECTION_NUMBER, entries.length);
+    }
+
+    /**
+     * Gets a valid user input based on menu range.
+     *
+     * @param min (in) int - minimum number user input can be.
+     * @param max (in) out - maximum number user input can be.
+     * @return (out) int - returns the selection of user.
+     */
+    static public int getNumberBetween(int min, int max) {
+        System.out.println("ENTER [" + min + "-" + max + "]:");
+        System.out.print("> ");
         Scanner keyboard = new Scanner(System.in);
-        return keyboard.nextInt();
+        boolean inputOk;
+        int selection;
+
+        while (true) {
+            selection = keyboard.nextInt();
+            inputOk = selection >= min && selection <= max;
+            if (!inputOk) {
+                System.out.println("Error: Please enter a selection between " + min + " and " + max);
+            } else {
+                break;
+            }
+        }
+        return selection;
     }
 
     //-----------------------------
@@ -130,7 +162,6 @@ public class TextMenu {
      */
     //---
     public void display() {
-        System.out.println();
         System.out.println(title);
 
         for (int i = 0; i < entries.length; i++) {
