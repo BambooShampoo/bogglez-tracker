@@ -373,43 +373,28 @@ public class ScenarioManager {
      * @param pageSize (in) int - How many items of data each page can hold.
      */
     //---
-    public ArrayList<Requester> generateRequesterPage(int page, int pageSize) {
-
-        // fields, char array versions are not exactly needed but help with debugging
-        // can do email = new String(reachCharsFromFile(releaseFile, MAX_EMAIL)); instead later
-        String email = "";
-        char[] emailArr;
-        String name = "";
-        char[] nameArr;
-        long phoneNumber = 0;
-        String department = "";
-        char[] departmentArr;
+    public String[] generateRequesterPage(int page, int pageSize) {
         long startingPage = page * pageSize * BYTES_SIZE_REQUESTER;
-
+        String[] emails = new String[pageSize];
+        Requester r = new Requester();
 
         try {
-            releaseFile.seek(startingPage);
+            requesterFile.seek(startingPage);
         } catch (IOException e) {
-            System.err.println("Error in finding requester page" + e.getMessage());
+        System.err.println("Error in reading from file" + e.getMessage());
         }
 
         for (int i = 0; i < 6; i++) {
             try {
-                emailArr = readCharsFromFile(releaseFile, MAX_EMAIL);
-                email = new String(emailArr);
-                nameArr = readCharsFromFile(releaseFile, MAX_NAME);
-                name = new String(nameArr);
-                phoneNumber = releaseFile.readLong();
-                departmentArr = readCharsFromFile(releaseFile, MAX_DEPARTMENT);
-                department = new String(departmentArr);
-
-                Requester thisRequester = new Requester(email, name, phoneNumber, department);
-                requesterArray.add(thisRequester);
+                r.readRequester(requesterFile);
+                emails[i] = new String(r.getEmail());
+            } catch (EOFException e) {
+                // do nothing when end of file is reached
             } catch (IOException e) {
                 System.err.println("Error in reading from file" + e.getMessage());
             }
         }
-        return requesterArray;
+        return emails;
     }
 
     //-----------------------------

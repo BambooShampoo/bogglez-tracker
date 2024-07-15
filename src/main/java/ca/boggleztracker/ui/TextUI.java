@@ -18,6 +18,7 @@ import ca.boggleztracker.model.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class TextUI {
@@ -147,7 +148,9 @@ public class TextUI {
      */
     //---
     public void doAddChangeRequest() {
-        String requesterEmail = selectRequester();
+//        String requesterEmail = selectRequester();
+        String requesterEmail = "eaoijf";
+        selectRequester();
         String productName = selectProduct();
         String releaseID = selectRelease(productName);
         int changeID = selectChangeItem(releaseID);
@@ -358,7 +361,14 @@ public class TextUI {
      * Displays a list of requesters and retrieves requester email
      */
     //---
-    public String selectRequester() { return ""; }
+    public void selectRequester() {
+        String[] emails = manager.generateRequesterPage(1, 6);
+        for (int i = 0; i < emails.length; i++) {
+            if (emails[i] != null) {
+                System.out.println(i + 1 + ". " + emails[i]);
+            }
+        }
+    }
 
     //-----------------------------
     /**

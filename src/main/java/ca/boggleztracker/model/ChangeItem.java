@@ -104,7 +104,7 @@ public class ChangeItem {
         file.writeChars(new String(status));
 
         if (anticipatedReleaseDate == null) {
-            file.writeChars("          ");
+            file.writeChars(" ".repeat(10));
         } else {
             file.writeChars(anticipatedReleaseDate.toString()); // format to yyyy-mm-dd (20 bytes)
         }
