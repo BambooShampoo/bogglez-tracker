@@ -54,7 +54,7 @@ public class ScenarioManager {
     public ArrayList<Requester> requesterArray = new ArrayList<Requester>();
     public ArrayList<String> productNameArray = new ArrayList<String>();
     public ArrayList<String> releaseArray = new ArrayList<String>();
-    public ArrayList<ChangeItem> changeItemArray = new ArrayList<ChangeItem>();
+    public int[] changeItemArray;
     // pending changes and completed changes can go to change item array
 
     //=============================
@@ -469,8 +469,27 @@ public class ScenarioManager {
      * @param pageSize (in) int - How many items of data each page can hold.
      */
     //---
-    public String generateChangeItemPage(int page, int pageSize) {
-        return "";
+    public int[] generateChangeItemPage(int page, int pageSize) {
+
+        int ChangeID;
+        long startingPage = page * pageSize * ChangeItem.BYTES_SIZE_CHANGE_ITEM;
+        ChangeItem c = new ChangeItem();
+
+        try {
+            changeItemFile.seek(startingPage);
+        } catch (IOException e) {
+            System.err.println("Error in reading from file" + e.getMessage());
+        }
+
+        for (int i = 0; i < 6; i++) {
+            try {
+                c.readChangeItems(changeItemFile);
+                changeItemArray[i] = c.getChangeID();
+            } catch (IOException e) {
+                System.err.println("Error in reading from file" + e.getMessage());
+            }
+        }
+        return changeItemArray;
     }
 
     //-----------------------------
