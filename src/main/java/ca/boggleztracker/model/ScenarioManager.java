@@ -52,8 +52,8 @@ public class ScenarioManager {
     private final RandomAccessFile changeRequestFile;
     private int requesterBytes = 120;
     public ArrayList<Requester> requesterArray = new ArrayList<Requester>();
-    public ArrayList<Product> productArray = new ArrayList<Product>();
-    public ArrayList<Release> releaseArray = new ArrayList<Release>();
+    public ArrayList<String> productNameArray = new ArrayList<String>();
+    public ArrayList<String> releaseArray = new ArrayList<String>();
     public ArrayList<ChangeItem> changeItemArray = new ArrayList<ChangeItem>();
     // pending changes and completed changes can go to change item array
 
@@ -420,8 +420,27 @@ public class ScenarioManager {
      * @param pageSize (in) int - How many items of data each page can hold.
      */
     //---
-    public ArrayList<Product> generateProductPage(int page, int pageSize) {
-        return productArray;
+    public ArrayList<String> generateProductPage(int page, int pageSize) {
+        String productName = "";
+        char[] productNameArr;
+        long startingPage = page * pageSize * Product.BYTES_SIZE_PRODUCT;
+
+        try {
+            releaseFile.seek(startingPage);
+        } catch (IOException e) {
+            System.err.println("Error in finding product page" + e.getMessage());
+        }
+
+        for (int i = 0; i < 6; i++) {
+            try {
+                productNameArr = readCharsFromFile(productFile, Product.MAX_PRODUCT_NAME);
+                productName = new String(productNameArr);
+                productNameArray.add(productName);
+            } catch (IOException e) {
+                System.err.println("Error in reading from file" + e.getMessage());
+            }
+        }
+        return productNameArray;
     }
 
     //-----------------------------
@@ -432,8 +451,29 @@ public class ScenarioManager {
      * @param pageSize (in) int - How many items of data each page can hold.
      */
     //---
-    public String generateReleasePage(int page, int pageSize) {
-        return "";
+    public ArrayList<String> generateReleasePage(int page, int pageSize) {
+        char[] productNameArr; // used to temporarily hold product name
+        String releaseVersion = "";
+        char[] releaseVersionArr;
+        long startingPage = page * pageSize * Release.BYTES_SIZE_RELEASE;
+
+        try {
+            releaseFile.seek(startingPage);
+        } catch (IOException e) {
+            System.err.println("Error in finding release page" + e.getMessage());
+        }
+
+        for (int i = 0; i < 6; i++) {
+            try {
+                productNameArr = readCharsFromFile(releaseFile, Product.MAX_PRODUCT_NAME);
+                releaseVersionArr = readCharsFromFile(releaseFile, Release.MAX_RELEASE_ID);
+                releaseVersion = new String(releaseVersionArr);
+                releaseArray.add(releaseVersion);
+            } catch (IOException e) {
+                System.err.println("Error in reading from file" + e.getMessage());
+            }
+        }
+        return releaseArray;
     }
 
     //-----------------------------
