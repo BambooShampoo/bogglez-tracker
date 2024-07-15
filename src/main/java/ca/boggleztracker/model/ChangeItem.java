@@ -7,6 +7,7 @@
  * - 2024-07-06: writeChangeItem implementation
  * - 2024-07-08: readChangeItem implementation
  * - 2024-07-09: moved generateRandomChangeID to Scenario Manager and made empty constructor for changeItem
+ * - 2024-07-15: created two getters for status and product name for use in scenario manager
  * Purpose:
  * ChangeItem class represents a change item of a particular product release and is responsible for
  * managing the change requests of the change item. The class stores data such as changeID, priority
@@ -89,6 +90,27 @@ public class ChangeItem {
     }
 
     //-----------------------------
+
+    //-----------------------------
+    /**
+     * returns the status of the object that it calls from.
+     * @return (out) char[] - status of the object
+     */
+    //---
+    public char[] getStatus() {return status;}
+
+    //-----------------------------
+
+    //-----------------------------
+    /**
+     * returns the product name of the object that it calls from.
+     * @return (out) char[] - product name of the object
+     */
+    //---
+    public char[] getProductName() {return productName;}
+
+    //-----------------------------
+
     /**
      * Writes the contents of release object to the release file.
      *

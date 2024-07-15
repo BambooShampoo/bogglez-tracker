@@ -10,6 +10,7 @@
  * - 2024-07-10: implemented modified add requester to check if email already exists
  * - 2024-07-13: implemented all add methods with uniqueness check
  * - 2024-07-14: implemented generateRequesterPage method
+ * - 2024-07-15: implemented all generate pages methods
  * Purpose:
  * ScenarioManager class is responsible for opening and closing the data file,
  * populating the array lists of products and requesters, and supports various interactions
@@ -437,9 +438,9 @@ public class ScenarioManager {
      */
     //---
     public ArrayList<String> generateReleasePage(int page, int pageSize) {
-        char[] productNameArr; // used to temporarily hold product name
-        String releaseVersion = "";
-        char[] releaseVersionArr;
+
+        String releaseVersion;
+        Release r = new Release();
         long startingPage = page * pageSize * Release.BYTES_SIZE_RELEASE;
 
         try {
@@ -450,9 +451,8 @@ public class ScenarioManager {
 
         for (int i = 0; i < 6; i++) {
             try {
-                productNameArr = readCharsFromFile(releaseFile, Product.MAX_PRODUCT_NAME);
-                releaseVersionArr = readCharsFromFile(releaseFile, Release.MAX_RELEASE_ID);
-                releaseVersion = new String(releaseVersionArr);
+                r.readRelease(releaseFile);
+                releaseVersion = new String(r.getReleaseID());
                 releaseArray.add(releaseVersion);
             } catch (IOException e) {
                 System.err.println("Error in reading from file" + e.getMessage());
@@ -499,8 +499,32 @@ public class ScenarioManager {
      * @param productName (in) String - Product name reference to find all pending changes.
      */
     //---
-    public String generatePendingChangesPage(String productName) {
-        return "";
+    public int[] generatePendingChangesPage(String productName) {
+
+        int ChangeID;
+        String product;
+        String changeStatus;
+        ChangeItem c = new ChangeItem();
+
+        int changeCounter = 0;
+
+        while (changeCounter < 6) {
+            try {
+                c.readChangeItems(changeItemFile);
+                changeStatus = new String(c.getStatus());
+                product = new String(c.getProductName());
+
+                if (productName == product) { // checks if product matches then if status is pending
+                    if (changeStatus == "open" || changeStatus == "assessed" || changeStatus == "in progress") {
+                        changeItemArray[changeCounter] = c.getChangeID();
+                        changeCounter++;
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Error in reading from file" + e.getMessage());
+            }
+        }
+        return changeItemArray;
     }
 
     //-----------------------------
