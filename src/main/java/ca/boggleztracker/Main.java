@@ -34,6 +34,12 @@ public class Main {
           
             ui.start();
 
+//            ui.doAddChangeItem("bogglez", "v1.0");
+//            manager.readAllRequesters();
+//            manager.readAllProducts();
+//            manager.readAllReleases();
+//            manager.readAllChangeItem();
+
         } catch (IOException e) {
             System.err.println("Error opening record files " + e.getMessage());
         }
