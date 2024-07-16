@@ -63,6 +63,18 @@ public class ChangeRequest {
         this.reportedDate = reportedDate;
     }
 
+    //=============================
+    // Methods
+    //=============================
+
+    public char[] getRequesterEmail() {
+        return requesterEmail;
+    }
+
+    public int getChangeID() {
+        return changeID;
+    }
+
     //-----------------------------
     /**
      * Writes the contents of release object to the release file.

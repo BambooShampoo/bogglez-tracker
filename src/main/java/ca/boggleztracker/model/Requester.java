@@ -80,6 +80,18 @@ public class Requester {
         return email;
     }
 
+    public char[] getName() {
+        return name;
+    }
+
+    public long getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public char[] getDepartment() {
+        return department;
+    }
+
     //-----------------------------
     /**
      * Writes the contents of Request object to the Request file.

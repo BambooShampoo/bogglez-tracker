@@ -6,6 +6,7 @@
  * - 2024-07-09: implemented sub menu display methods
  * - 2024-07-10: implemented add requester user interaction
  * - 2024-07-13: implemented add all add user interactions
+ * - 2024-07-16: implemented all selection & report interactions
  * Purpose:
  * TextUI class is responsible for managing the user interface (UI) of the bug tracker
  * application. The class creates TextMenu objects and handles the different
@@ -19,9 +20,7 @@ import ca.boggleztracker.model.*;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.Arrays;
 import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class TextUI {
     //=============================
@@ -167,7 +166,7 @@ public class TextUI {
         if (releaseID == null) {
             return;
         }
-        int changeID = selectChangeItem(productName, releaseID);
+        int changeID = selectChangeItem(productName, releaseID, "");
         if (changeID == -1) {
             return;
         }
@@ -225,8 +224,16 @@ public class TextUI {
         InputValidator maxLengthValidator = (input, length) -> input.length() <= length;
 
         String productName = selectProduct();
+        if (productName == null) {
+            return;
+        }
+
         String releaseID = selectRelease(productName);
-        int changeID = selectChangeItem(productName, releaseID);
+        if (releaseID == null) {
+            return;
+        }
+
+        int changeID = selectChangeItem(productName, releaseID, "");
 
         System.out.println("Enter change description (length: 30 max)");
         String changeDescription = getStringUserInput(ChangeItem.MAX_DESCRIPTION, maxLengthValidator);
@@ -300,6 +307,9 @@ public class TextUI {
     public void doAddRelease() {
         InputValidator maxLengthValidator = (input, length) -> input.length() <= length;
         String productName = selectProduct();
+        if (productName == null) {
+            return;
+        }
 
         System.out.println("Enter new release ID for product " + productName + " (length: 8 max)");
         String releaseID = getStringUserInput(Release.MAX_RELEASE_ID, maxLengthValidator);
@@ -324,7 +334,14 @@ public class TextUI {
     //---
     public void doModifyRelease() {
         String productName = selectProduct();
+        if (productName == null) {
+            return;
+        }
+
         String releaseID = selectRelease(productName);
+        if (releaseID == null) {
+            return;
+        }
 
         System.out.println("Enter updated release date (yyyy-mm-dd)");
         LocalDate releaseDate = getValidLocalDateInput();
@@ -349,7 +366,7 @@ public class TextUI {
     public void reportsMenu() {
         TextMenu.MenuEntry[] menuEntries = new TextMenu.MenuEntry[] {
                 new TextMenu.MenuEntry("Report for Pending Change Items of a Product", this::listPendingChanges),
-                new TextMenu.MenuEntry("Report for Requester/Staff Notification", this::listPendingChanges),
+                new TextMenu.MenuEntry("Report for Requester/Staff Notification", this::listRequesterNotification),
                 new TextMenu.MenuEntry("Return to Main Menu", null)
         };
 
@@ -363,7 +380,13 @@ public class TextUI {
      * Provides the user interaction to display report of all pending change items for a product.
      */
     //---
-    public void listPendingChanges() {}
+    public void listPendingChanges() {
+        String productName = selectProduct();
+        if (productName == null) {
+            return;
+        }
+        selectChangeItem(productName, "", "pending");
+    }
 
     //-----------------------------
     /**
@@ -371,7 +394,60 @@ public class TextUI {
      * of completed change items.
      */
     //---
-    public void listRequesterNotification() {}
+    public void listRequesterNotification() {
+        String productName = selectProduct();
+        if (productName == null) {
+            return;
+        }
+
+        String releaseID = selectRelease(productName);
+        if (releaseID == null) {
+            return;
+        }
+
+        int changeID = selectChangeItem(productName, releaseID, "completed");
+        if (changeID == -1) {
+            return;
+        }
+
+        Scanner keyboard = new Scanner(System.in);
+        String input = "";
+        String lastEmail = null;
+
+
+        while (true) {
+            System.out.println("Requester Emails to Notify:");
+            System.out.println("===========================");
+            System.out.printf("  %-24s\n", "Emails");
+            System.out.println("  ------------------------");
+
+            String[] emails = manager.generateEmailsPage(changeID, lastEmail, PAGE_SIZE);
+
+
+            for (int i = 0; i < emails.length; i++) {
+                if (emails[i] != null) {
+                    System.out.print(i + 1 + ") ") ;
+                    System.out.printf("%-24s\n", emails[i]);
+                }
+            }
+            System.out.println("0) Return to issue menu");
+            System.out.println("N) List next emails");
+            System.out.println("ENTER:");
+
+            input = keyboard.nextLine().toLowerCase();
+
+            switch (input) {
+                case "0":
+                    return;
+                case "n":
+                    // reset to first page if it's the last
+                    lastEmail = emails[PAGE_SIZE - 1];
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     //-----------------------------
     /**
@@ -461,7 +537,6 @@ public class TextUI {
             }
             System.out.println("0) Return to issue menu");
             System.out.println("N) List next emails");
-            System.out.println("Page[1/XX]==");
             System.out.println("ENTER:");
 
             input = keyboard.nextLine().toLowerCase();
@@ -507,15 +582,14 @@ public class TextUI {
     //---
     public String selectRelease(String productName) {
         Scanner keyboard = new Scanner(System.in);
-        String releaseName = "";
-        String lastReleaseName = "";
-        String input = "";
-        int page = 0;
+        String releaseName;
+        String lastReleaseName = null;
+        String input;
 
         while (true) {
             // list out product names
             System.out.println("==Release==");
-            String[] releases = manager.generateReleasePage(productName, lastReleaseName, page, PAGE_SIZE);
+            String[] releases = manager.generateReleasePage(productName, lastReleaseName, PAGE_SIZE);
             for (int i = 0; i < releases.length; i++) {
                 if (releases[i] != null) {
                     System.out.println(i + 1 + ") " + releases[i]);
@@ -523,7 +597,6 @@ public class TextUI {
             }
             System.out.println("0) Return to issue menu");
             System.out.println("N) List next releases");
-            System.out.println("Page[1/XX]==");
             System.out.println("ENTER:");
 
             input = keyboard.nextLine().toLowerCase();
@@ -533,19 +606,7 @@ public class TextUI {
                     return null;
                 case "n":
                     // reset to first page if it's the last
-                    try {
-                        page++;
-                        boolean exceedsFileSize = page * PAGE_SIZE * Release.BYTES_SIZE_RELEASE
-                                >= manager.getReleaseFileSize();
-                        if (exceedsFileSize) {
-                            page = 0;
-                            lastReleaseName = "";
-                        } else {
-                            lastReleaseName = releases[PAGE_SIZE - 1];
-                        }
-                    } catch (IOException e) {
-                        System.out.println("Error opening file");
-                    }
+                    lastReleaseName = new String(releases[PAGE_SIZE - 1]);
                     break;
                 default:
                     try {
@@ -571,22 +632,33 @@ public class TextUI {
      * Displays a list of change items based on provided release and returns changeID.
      */
     //---
-    public int selectChangeItem(String productName, String releaseID) {
+    public int selectChangeItem(String productName, String releaseID, String mode) {
         Scanner keyboard = new Scanner(System.in);
+        ChangeItem[] changeItems;
         int lastChangeID = -1;
         int changeID;
         String input = "";
-        int page = 0;
 
         while (true) {
-            // list out requester emails
+            // list out changes
             System.out.println("Changes for " + productName.trim() + " " + releaseID.trim() + ":");
             System.out.println("======================================================================================");
             System.out.println("                                                                           Anticipated");
             System.out.printf("  %10s  %-30s  %12s  %10s  %14s\n", "ChangeID", "Description", "Status", "Priority", " Release Date");
             System.out.println("  ----------  ------------------------------  ------------  ----------  --------------");
 
-            ChangeItem[] changeItems = manager.generateChangeItemPage(productName, releaseID, lastChangeID, page, PAGE_SIZE);
+
+
+            if (mode.equals("pending")) {
+                changeItems = manager.generateFilteredChangesPage(productName, lastChangeID, PAGE_SIZE, mode);
+            } else if (mode.equals("completed")) {
+                changeItems = manager.generateFilteredChangesPage(productName, lastChangeID, PAGE_SIZE, mode);
+            } else {
+                changeItems = manager.generateChangeItemPage(productName, releaseID, lastChangeID, PAGE_SIZE);
+            }
+
+
+
             for (int i = 0; i < changeItems.length; i++) {
                 if (changeItems[i] != null) {
                     ChangeItem item = changeItems[i];
@@ -596,9 +668,8 @@ public class TextUI {
                 }
             }
             System.out.println("0) Return to issue menu");
-            System.out.println("N) List next emails");
+            System.out.println("N) List next changes");
             System.out.println("C) Create new change item");
-            System.out.println("Page[1/XX]==");
             System.out.println("ENTER:");
 
             input = keyboard.nextLine().toLowerCase();
@@ -608,18 +679,10 @@ public class TextUI {
                     return -1;
                 case "n":
                     // reset to first page if it's the last
-                    try {
-                        page++;
-                        boolean exceedsFileSize = page * PAGE_SIZE * ChangeItem.BYTES_SIZE_CHANGE_ITEM
-                                > manager.getChangeFileSize();
-                        if (exceedsFileSize) {
-                            page = 0;
-                            lastChangeID = -1;
-                        } else if (changeItems[PAGE_SIZE - 1] != null) {
-                            lastChangeID = changeItems[PAGE_SIZE - 1].getChangeID();
-                        }
-                    } catch (IOException e) {
-                        System.out.println("Error opening file");
+                    if (changeItems[PAGE_SIZE - 1] == null) {
+                        lastChangeID = -1;
+                    } else {
+                        lastChangeID = changeItems[PAGE_SIZE - 1].getChangeID();
                     }
                     break;
                 case "c":

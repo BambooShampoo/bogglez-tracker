@@ -84,16 +84,6 @@ public class ScenarioManager {
         return productFile.length();
     }
 
-    public long getReleaseFileSize() throws IOException {
-        return releaseFile.length();
-    }
-
-    public long getChangeFileSize() throws IOException {
-        return changeItemFile.length();
-    }
-
-
-
     //-----------------------------
     /**
      * Helper function that generates a random change ID upon instantiation of object.
@@ -362,7 +352,7 @@ public class ScenarioManager {
     //---
     public void modifyRelease(String releaseID, Release modifiedRelease) {
         Release fileRelease = new Release();
-        int pos = 0;
+        long pos = 0;
 
         try {
             releaseFile.seek(pos);
@@ -479,34 +469,20 @@ public class ScenarioManager {
     /**
      * Gets a list of Valid Releases from the file to display for user.
      *
-     * @param page (in) int - Counter to track what page of Release are displayed for user.
+     * @param productName (in) String - productName of specified release.
+     * @param lastReleaseName (in) String - last release of previous page.
      * @param pageSize (in) int - How many items of data each page can hold.
-     * @return (out) String - String array of releases of specific product
+     * @return (out) String - String array of releases of specific product.
      */
     //---
-    public String[] generateReleasePage(String productName, String lastReleaseName, int page, int pageSize) {
+    public String[] generateReleasePage(String productName, String lastReleaseName, int pageSize) {
         String[] releaseVersions = new String[pageSize];
         Release r = new Release();
 
         // get the starting position in file
-
         try {
-            if (lastReleaseName == null || lastReleaseName.isEmpty()) {
-                releaseFile.seek(0);
-            } else {
-                long pos = 0;
-                releaseFile.seek(pos);
-                // locate correct Release from file
-                while (true) {
-                    r.readRelease(releaseFile);
-                    String releaseOfStartingPosition = new String(r.getReleaseID());
-                    if (lastReleaseName.equals(releaseOfStartingPosition)) {
-                        break;
-                    }
-                    pos += Release.BYTES_SIZE_RELEASE;
-                }
-                releaseFile.seek(pos + Release.BYTES_SIZE_RELEASE);
-            }
+            long startPosition = getStartingPositionForReleaseItem(lastReleaseName);
+            releaseFile.seek(startPosition);
         } catch (IOException e) {
             System.err.println("Error in finding release page" + e.getMessage());
         }
@@ -531,36 +507,52 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
+     * Utility method that searches the last release of the previous page, and gets its position
+     * in the file.
+     *
+     * @param lastReleaseName (in) String - last release of previous page.
+     * @return (out) long - position in number of bytes
+     * @throws IOException
+     */
+    //---
+    private long getStartingPositionForReleaseItem(String lastReleaseName) throws IOException {
+        Release release = new Release();
+        long pos = 0;
+        releaseFile.seek(pos);
+
+        if (lastReleaseName != null) {
+            while (true) {
+                release.readRelease(releaseFile);
+                String startingPositionOfRelease = new String(release.getReleaseID());
+                if (lastReleaseName.equals(startingPositionOfRelease)) {
+                    break;
+                }
+                pos += Release.BYTES_SIZE_RELEASE;
+            }
+            pos += Release.BYTES_SIZE_RELEASE;
+        }
+        return pos;
+    }
+
+    //-----------------------------
+    /**
      * Gets a list of Valid ChangeItem from the file to display for user.
      *
-     * @param page (in) int - Counter to track what page of ChangeItem are displayed for user.
+     * @param productName (in) String - Product name for specified change item.
+     * @param releaseID (in) String - Release ID for specified change item.
+     * @param lastChangeItem (in) int - last change item of previous page.
      * @param pageSize (in) int - How many items of data each page can hold.
      */
     //---
-    public ChangeItem[] generateChangeItemPage(String productName, String releaseID, int lastChangeItems, int page, int pageSize) {
+    public ChangeItem[] generateChangeItemPage(String productName, String releaseID, int lastChangeItem, int pageSize) {
         ChangeItem[] changeItems = new ChangeItem[pageSize];
-        ChangeItem change = new ChangeItem();
 
         // get the starting position in file
         try {
-            if (lastChangeItems == -1) {
-                changeItemFile.seek(0);
-            } else {
-                long pos = 0;
-                changeItemFile.seek(pos);
-                // locate correct Release from file
-                while (true) {
-                    change.readChangeItems(changeItemFile);
-                    int changeItemOfStartingPosition = change.getChangeID();
-                    if (lastChangeItems == changeItemOfStartingPosition) {
-                        break;
-                    }
-                    pos += ChangeItem.BYTES_SIZE_CHANGE_ITEM;
-                }
-                changeItemFile.seek(pos + ChangeItem.BYTES_SIZE_CHANGE_ITEM);
-            }
+            long startingPosition = getStartingPositionForChangeItem(lastChangeItem);
+            changeItemFile.seek(startingPosition);
         } catch (IOException e) {
-            System.err.println("Error in finding release page" + e.getMessage());
+            System.err.println("Error in finding change item page" + e.getMessage());
         }
 
         int changeItemCounter = 0;
@@ -587,37 +579,77 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
+     * Utility method that searches the last change item of the previous page, and gets its position
+     * in the file.
+     *
+     * @param lastChangeItem (in) int - last change item of previous page.
+     * @return (out) long - position in number of bytes
+     * @throws IOException
+     */
+    //---
+    private long getStartingPositionForChangeItem(int lastChangeItem) throws IOException {
+        ChangeItem change = new ChangeItem();
+        long pos = 0;
+        changeItemFile.seek(pos);
+
+        if (lastChangeItem != -1) {
+            while (true) {
+                change.readChangeItems(changeItemFile);
+                int changeItemOfStartingPosition = change.getChangeID();
+                if (lastChangeItem == changeItemOfStartingPosition) {
+                    break;
+                }
+                pos += ChangeItem.BYTES_SIZE_CHANGE_ITEM;
+            }
+            pos += ChangeItem.BYTES_SIZE_CHANGE_ITEM;
+        }
+        return pos;
+    }
+
+    //-----------------------------
+    /**
      * Get s a list of all pending change items of a specific product.
      *
      * @param productName (in) String - Product name reference to find all pending changes.
      */
     //---
-    public int[] generatePendingChangesPage(String productName) {
+    public ChangeItem[] generateFilteredChangesPage(String productName, int lastChangeItem, int pageSize, String mode) {
+        ChangeItem[] changeItems = new ChangeItem[pageSize];
 
-        int ChangeID;
-        String product;
-        String changeStatus;
-        ChangeItem c = new ChangeItem();
+        try {
+            long startingPosition = getStartingPositionForChangeItem(lastChangeItem);
+            changeItemFile.seek(startingPosition);
+        } catch (IOException e) {
+            System.err.println("Error in finding change item page" + e.getMessage());
+        }
 
-        int changeCounter = 0;
-
-        while (changeCounter < 6) {
+        int changeItemCounter = 0;
+        while (changeItemCounter < pageSize) {
             try {
+                ChangeItem c = new ChangeItem();
                 c.readChangeItems(changeItemFile);
-                changeStatus = new String(c.getStatus());
-                product = new String(c.getProductName());
 
-                if (productName == product) { // checks if product matches then if status is pending
-                    if (changeStatus == "open" || changeStatus == "assessed" || changeStatus == "in progress") {
-                        changeItemArray[changeCounter] = c.getChangeID();
-                        changeCounter++;
-                    }
+                String tempProductName = new String(c.getProductName());
+                String tempStatus = new String(c.getStatus()).trim();
+                boolean validChange;
+                if (mode.equals("pending")) {
+                    validChange = tempProductName.equals(productName) &&
+                            (!tempStatus.equals("Completed") && !tempStatus.equals("Cancelled"));
+                } else {
+                    validChange = tempProductName.equals(productName) &&
+                            (tempStatus.equals("Completed"));
                 }
+                if (validChange) {
+                    changeItems[changeItemCounter] = c;
+                    changeItemCounter++;
+                }
+            } catch (EOFException e) {
+                break;
             } catch (IOException e) {
                 System.err.println("Error in reading from file" + e.getMessage());
             }
         }
-        return changeItemArray;
+        return changeItems;
     }
 
     //-----------------------------
@@ -625,8 +657,65 @@ public class ScenarioManager {
      * Gets a list of all completed changes for customer notification.
      */
     //---
-    public String generateCompletedChangesPage() {
-        return "";
+    public String[] generateEmailsPage(int changeID, String lastEmail, int pageSize) {
+        String[] emails = new String[pageSize];
+
+         ChangeRequest request = new ChangeRequest();
+
+        // get the starting position in file
+        try {
+            long startPosition = getStartingPositionForChangeRequest(lastEmail);
+            changeRequestFile.seek(startPosition);
+        } catch (IOException e) {
+            System.err.println("Error in finding change request page" + e.getMessage());
+        }
+
+        int emailCounter = 0;
+        while (emailCounter < pageSize) {
+            try {
+                request.readChangeRequest(changeRequestFile);
+                int tempChangeID = request.getChangeID();
+                if (tempChangeID == changeID) {
+                    emails[emailCounter] = new String(request.getRequesterEmail());
+                    emailCounter++;
+                }
+            } catch (EOFException e) {
+                break;
+            } catch (IOException e) {
+                System.err.println("Error in reading from file" + e.getMessage());
+            }
+        }
+        return emails;
+
+    }
+
+    //-----------------------------
+    /**
+     * Utility method that searches the last requester of the previous page, and gets its position
+     * in the file.
+     *
+     * @param lastEmail (in) int - last change item of previous page.
+     * @return (out) long - position in number of bytes
+     * @throws IOException
+     */
+    //---
+    private long getStartingPositionForChangeRequest(String lastEmail) throws IOException {
+        ChangeRequest request = new ChangeRequest();
+        long pos = 0;
+        changeRequestFile.seek(pos);
+
+        if (lastEmail != null) {
+            while (true) {
+                request.readChangeRequest(changeRequestFile);
+                String startingPostionOfChangeRequest = new String(request.getRequesterEmail());
+                if (lastEmail.equals(startingPostionOfChangeRequest)) {
+                    break;
+                }
+                pos += ChangeRequest.BYTES_SIZE_CHANGE_REQUEST;
+            }
+            pos += ChangeRequest.BYTES_SIZE_CHANGE_REQUEST;
+        }
+        return pos;
     }
 
     // ****temporary testing method - delete later.
