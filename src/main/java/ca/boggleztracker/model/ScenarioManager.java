@@ -93,16 +93,22 @@ public class ScenarioManager {
             return random;
         }
         try{
+            boolean unique = true;
             int pos = 0;
             changeItemFile.seek(pos);
             while (pos < changeItemFile.length()){
+                unique = true;
                 dummy.readChangeItems(changeItemFile);
                 if (dummy.getChangeID() == random){
                     random = rand.nextInt(1000000);
+                    unique = false;
                     changeItemFile.seek(0);
                     break;
                 }
                 pos += ChangeItem.BYTES_SIZE_CHANGE_ITEM;
+            }
+            if(!unique){
+                throw new RuntimeException("Error, no unique ChangeID generated");
             }
             return random;
         }catch (IOException e){
