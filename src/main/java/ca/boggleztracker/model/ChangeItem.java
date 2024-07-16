@@ -28,6 +28,7 @@ public class ChangeItem {
     public static final int MAX_STATUS = 12;
     public static final long BYTES_SIZE_CHANGE_ITEM = 146;
 
+
     //=============================
     // Member fields
     //=============================

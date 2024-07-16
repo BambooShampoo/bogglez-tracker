@@ -108,16 +108,22 @@ public class ScenarioManager {
             return random;
         }
         try{
+            boolean unique = true;
             int pos = 0;
             changeItemFile.seek(pos);
             while (pos < changeItemFile.length()){
+                unique = true;
                 dummy.readChangeItems(changeItemFile);
                 if (dummy.getChangeID() == random){
                     random = rand.nextInt(1000000);
+                    unique = false;
                     changeItemFile.seek(0);
                     break;
                 }
                 pos += ChangeItem.BYTES_SIZE_CHANGE_ITEM;
+            }
+            if(!unique){
+                throw new RuntimeException("Error, no unique ChangeID generated");
             }
             return random;
         }catch (IOException e){
@@ -319,6 +325,28 @@ public class ScenarioManager {
             }
             changeItemFile.seek(pos);
             modifiedChangeItem.writeChangeItem(changeItemFile);
+        } catch (IOException e) {
+            System.err.println("Error modifying change item to file " + e.getMessage());
+        }
+    }
+    // *********TEMPORARY FOR UNIT TEST, DELETE LATER
+    public void modifyChangeItem(RandomAccessFile myfile,int changeID, ChangeItem modifiedChangeItem) {
+        ChangeItem change = new ChangeItem();
+        int pos = 0;
+
+        try {
+            myfile.seek(pos);
+            //locate correct ChangeItem from file
+            while (true){
+                change.readChangeItems(myfile);
+
+                if (changeID == change.getChangeID()){
+                    break;
+                }
+                pos += ChangeItem.BYTES_SIZE_CHANGE_ITEM;
+            }
+            myfile.seek(pos);
+            modifiedChangeItem.writeChangeItem(myfile);
         } catch (IOException e) {
             System.err.println("Error modifying change item to file " + e.getMessage());
         }

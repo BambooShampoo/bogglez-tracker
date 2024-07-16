@@ -21,7 +21,7 @@ class ChangeItemTest {
     public String releaseID = "v1.0";
     public String productName = "mySoftware";
     public String changeDescription = "Menu not populating";
-    public int priority = 5;
+    public char priority = '5';
     public String status = "Open";
     public LocalDate anticipatedReleaseDate = LocalDate.parse("2020-01-08");
     public String filename = "UnitTest01Text.dat";
@@ -41,10 +41,10 @@ class ChangeItemTest {
         System.out.println(changeItem.toString());
     }
     //-----------------------------
-/*
-*   Description: Unit test to test the writing of a change item to a random access file.
-*   Precondition: UnitTest01Text.dat contains no records.
-*/
+    /*
+    *   Description: Unit test to test the writing of a change item to a random access file.
+    *   Precondition: UnitTest01Text.dat contains no records.
+    */
     void testFileWriting() {
         ChangeItem changeItem = new ChangeItem(changeID,releaseID, productName, changeDescription,
                 priority, status, anticipatedReleaseDate);
@@ -57,11 +57,11 @@ class ChangeItemTest {
         }
     }
     //-----------------------------
-/*
-*   Description: Unit test to test the reading of a single change item from a random access file
-*   Precondition: UnitTest01Text.dat contains a single record with the variables initialized
-*                 earlier (can be done by running the previous test)
- */
+    /*
+    *   Description: Unit test to test the reading of a single change item from a random access file
+    *   Precondition: UnitTest01Text.dat contains a single record with the variables initialized
+    *                 earlier (can be done by running the previous test)
+    */
     void testFileReading() {
         ChangeItem changeItem = new ChangeItem(changeID,releaseID, productName, changeDescription,
                 priority, status, anticipatedReleaseDate);
