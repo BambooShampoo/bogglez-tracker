@@ -23,7 +23,7 @@ public class Release {
     // Constants and static fields
     //=============================
     public static final int MAX_RELEASE_ID = 8;
-    public static final int BYTES_SIZE_RELEASE = 56;
+    public static final long BYTES_SIZE_RELEASE = 56;
     //=============================
     // Member fields
     //=============================
@@ -63,6 +63,25 @@ public class Release {
     //=============================
 
     //-----------------------------
+
+    /**
+     * Getter method for product name.
+     * @return (out) char[]
+     */
+    public char[] getProductName() {
+        return productName;
+    }
+
+    //-----------------------------
+    /**
+     * returns the ReleaseID of the object that it calls from.
+     */
+    //---
+    public char[] getReleaseID() {
+        return releaseID;
+    }
+
+    //-----------------------------
     /**
      * Writes the contents of release object to the release file.
      *
@@ -73,15 +92,6 @@ public class Release {
         file.writeChars(new String(productName));
         file.writeChars(new String(releaseID));
         file.writeChars(date.toString()); // format to yyyy-mm-dd (20 bytes)
-    }
-
-    //-----------------------------
-    /**
-     * returns the ReleaseID of the object that it calls from.
-     */
-    //---
-    public char[] getReleaseID() {
-        return releaseID;
     }
 
     //-----------------------------

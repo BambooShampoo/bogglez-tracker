@@ -19,6 +19,8 @@
 
 package ca.boggleztracker.model;
 
+import org.w3c.dom.ls.LSOutput;
+
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -38,10 +40,6 @@ public class ScenarioManager {
     private static final String CHANGE_ITEM_FILE = "change-item.dat";
     private static final String CHANGE_REQUEST_FILE = "change-request.dat";
     private static final int LOCAL_DATE_LENGTH = 10;
-    public static final int MAX_EMAIL = 24;
-    public static final int MAX_NAME = 30;
-    public static final int MAX_DEPARTMENT = 2;
-    public static final long BYTES_SIZE_REQUESTER = 120;
 
     //=============================
     // Member fields
@@ -51,7 +49,6 @@ public class ScenarioManager {
     private final RandomAccessFile releaseFile;
     private final RandomAccessFile changeItemFile;
     private final RandomAccessFile changeRequestFile;
-    private int requesterBytes = 120;
     public ArrayList<Requester> requesterArray = new ArrayList<Requester>();
     public ArrayList<String> productNameArray = new ArrayList<String>();
     public ArrayList<String> releaseArray = new ArrayList<String>();
@@ -78,6 +75,24 @@ public class ScenarioManager {
     //=============================
     // Methods
     //=============================
+
+    public long getRequesterFileSize() throws IOException {
+        return requesterFile.length();
+    }
+
+    public long getProductFileSize() throws IOException {
+        return productFile.length();
+    }
+
+    public long getReleaseFileSize() throws IOException {
+        return releaseFile.length();
+    }
+
+    public long getChangeFileSize() throws IOException {
+        return changeItemFile.length();
+    }
+
+
 
     //-----------------------------
     /**
@@ -372,10 +387,11 @@ public class ScenarioManager {
      *
      * @param page (in) int - Counter to track what page of Requester are displayed for user.
      * @param pageSize (in) int - How many items of data each page can hold.
+     * @return (out) String[] - String array of emails.
      */
     //---
     public String[] generateRequesterPage(int page, int pageSize) {
-        long startingPage = page * pageSize * BYTES_SIZE_REQUESTER;
+        long startingPage = page * pageSize * Requester.BYTES_SIZE_REQUESTER;
         String[] emails = new String[pageSize];
         Requester r = new Requester();
 
@@ -404,29 +420,31 @@ public class ScenarioManager {
      *
      * @param page (in) int - Counter to track what page of Product are displayed for user.
      * @param pageSize (in) int - How many items of data each page can hold.
+     * @return String[] (out) - String array of product names
      */
     //---
-    public ArrayList<String> generateProductPage(int page, int pageSize) {
-        String productName = "";
-        char[] productNameArr;
+    public String[] generateProductPage(int page, int pageSize) {
+        String[] productNames = new String[pageSize];
         long startingPage = page * pageSize * Product.BYTES_SIZE_PRODUCT;
+        Product p = new Product();
 
         try {
-            releaseFile.seek(startingPage);
+            productFile.seek(startingPage);
         } catch (IOException e) {
             System.err.println("Error in finding product page" + e.getMessage());
         }
 
         for (int i = 0; i < 6; i++) {
             try {
-                productNameArr = readCharsFromFile(productFile, Product.MAX_PRODUCT_NAME);
-                productName = new String(productNameArr);
-                productNameArray.add(productName);
+                p.readProduct(productFile);
+                productNames[i] = new String(p.getProductName());
+            } catch (EOFException e) {
+                // do nothing at end of file
             } catch (IOException e) {
                 System.err.println("Error in reading from file" + e.getMessage());
             }
         }
-        return productNameArray;
+        return productNames;
     }
 
     //-----------------------------
@@ -435,30 +453,52 @@ public class ScenarioManager {
      *
      * @param page (in) int - Counter to track what page of Release are displayed for user.
      * @param pageSize (in) int - How many items of data each page can hold.
+     * @return (out) String - String array of releases of specific product
      */
     //---
-    public ArrayList<String> generateReleasePage(int page, int pageSize) {
-
-        String releaseVersion;
+    public String[] generateReleasePage(String productName, String lastReleaseName, int page, int pageSize) {
+        String[] releaseVersions = new String[pageSize];
         Release r = new Release();
-        long startingPage = page * pageSize * Release.BYTES_SIZE_RELEASE;
+
+        // get the starting position in file
 
         try {
-            releaseFile.seek(startingPage);
+            if (lastReleaseName == null || lastReleaseName.isEmpty()) {
+                releaseFile.seek(0);
+            } else {
+                long pos = 0;
+                releaseFile.seek(pos);
+                // locate correct Release from file
+                while (true) {
+                    r.readRelease(releaseFile);
+                    String releaseOfStartingPosition = new String(r.getReleaseID());
+                    if (lastReleaseName.equals(releaseOfStartingPosition)) {
+                        break;
+                    }
+                    pos += Release.BYTES_SIZE_RELEASE;
+                }
+                releaseFile.seek(pos + Release.BYTES_SIZE_RELEASE);
+            }
         } catch (IOException e) {
             System.err.println("Error in finding release page" + e.getMessage());
         }
 
-        for (int i = 0; i < 6; i++) {
+        int releaseCounter = 0;
+        while (releaseCounter < pageSize) {
             try {
                 r.readRelease(releaseFile);
-                releaseVersion = new String(r.getReleaseID());
-                releaseArray.add(releaseVersion);
+                String temp = new String(r.getProductName());
+                if (temp.equals(productName)) {
+                    releaseVersions[releaseCounter] = new String(r.getReleaseID());
+                    releaseCounter++;
+                }
+            } catch (EOFException e) {
+                break;
             } catch (IOException e) {
                 System.err.println("Error in reading from file" + e.getMessage());
             }
         }
-        return releaseArray;
+        return releaseVersions;
     }
 
     //-----------------------------
@@ -469,27 +509,52 @@ public class ScenarioManager {
      * @param pageSize (in) int - How many items of data each page can hold.
      */
     //---
-    public int[] generateChangeItemPage(int page, int pageSize) {
+    public ChangeItem[] generateChangeItemPage(String productName, String releaseID, int lastChangeItems, int page, int pageSize) {
+        ChangeItem[] changeItems = new ChangeItem[pageSize];
+        ChangeItem change = new ChangeItem();
 
-        int ChangeID;
-        long startingPage = page * pageSize * ChangeItem.BYTES_SIZE_CHANGE_ITEM;
-        ChangeItem c = new ChangeItem();
-
+        // get the starting position in file
         try {
-            changeItemFile.seek(startingPage);
+            if (lastChangeItems == -1) {
+                changeItemFile.seek(0);
+            } else {
+                long pos = 0;
+                changeItemFile.seek(pos);
+                // locate correct Release from file
+                while (true) {
+                    change.readChangeItems(changeItemFile);
+                    int changeItemOfStartingPosition = change.getChangeID();
+                    if (lastChangeItems == changeItemOfStartingPosition) {
+                        break;
+                    }
+                    pos += ChangeItem.BYTES_SIZE_CHANGE_ITEM;
+                }
+                changeItemFile.seek(pos + ChangeItem.BYTES_SIZE_CHANGE_ITEM);
+            }
         } catch (IOException e) {
-            System.err.println("Error in reading from file" + e.getMessage());
+            System.err.println("Error in finding release page" + e.getMessage());
         }
 
-        for (int i = 0; i < 6; i++) {
+        int changeItemCounter = 0;
+        while (changeItemCounter < pageSize) {
             try {
+                ChangeItem c = new ChangeItem();
                 c.readChangeItems(changeItemFile);
-                changeItemArray[i] = c.getChangeID();
+
+                String tempProductName = new String(c.getProductName());
+                String tempReleaseID = new String(c.getReleaseID());
+
+                if (tempProductName.equals(productName) && tempReleaseID.equals(releaseID)) {
+                    changeItems[changeItemCounter] = c;
+                    changeItemCounter++;
+                }
+            } catch (EOFException e) {
+                break;
             } catch (IOException e) {
                 System.err.println("Error in reading from file" + e.getMessage());
             }
         }
-        return changeItemArray;
+        return changeItems;
     }
 
     //-----------------------------

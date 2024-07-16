@@ -26,7 +26,7 @@ public class ChangeItem {
     //=============================
     public static final int MAX_DESCRIPTION = 30;
     public static final int MAX_STATUS = 12;
-    public static final int BYTES_SIZE_CHANGE_ITEM = 148;
+    public static final long BYTES_SIZE_CHANGE_ITEM = 146;
 
     //=============================
     // Member fields
@@ -110,7 +110,28 @@ public class ChangeItem {
     public char[] getProductName() {return productName;}
 
     //-----------------------------
+    /**
+     * returns the release id of the object that it calls from.
+     * @return (out) char[] - release id of the object.
+     */
+    //---
+    public char[] getReleaseID() {
+        return releaseID;
+    }
 
+    public char[] getChangeDescription() {
+        return changeDescription;
+    }
+
+    public char getPriority() {
+        return priority;
+    }
+
+    public LocalDate getAnticipatedReleaseDate() {
+        return anticipatedReleaseDate;
+    }
+
+    //-----------------------------
     /**
      * Writes the contents of release object to the release file.
      *

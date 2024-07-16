@@ -16,12 +16,19 @@ package ca.boggleztracker.ui;
 
 import ca.boggleztracker.model.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TextUI {
+    //=============================
+    // Static and Constant fields
+    //=============================
+    public static final int PAGE_SIZE = 6;
+
     //=============================
     // Member fields
     //=============================
@@ -148,12 +155,22 @@ public class TextUI {
      */
     //---
     public void doAddChangeRequest() {
-//        String requesterEmail = selectRequester();
-        String requesterEmail = "eaoijf";
-        selectRequester();
+        String requesterEmail = selectRequester();
+        if (requesterEmail == null) {
+            return;
+        }
         String productName = selectProduct();
+        if (productName == null) {
+            return;
+        }
         String releaseID = selectRelease(productName);
-        int changeID = selectChangeItem(releaseID);
+        if (releaseID == null) {
+            return;
+        }
+        int changeID = selectChangeItem(productName, releaseID);
+        if (changeID == -1) {
+            return;
+        }
 
         System.out.println("Enter change request date (yyyy-mm-dd)");
         LocalDate date = getValidLocalDateInput();
@@ -209,7 +226,7 @@ public class TextUI {
 
         String productName = selectProduct();
         String releaseID = selectRelease(productName);
-        int changeID = selectChangeItem(releaseID);
+        int changeID = selectChangeItem(productName, releaseID);
 
         System.out.println("Enter change description (length: 30 max)");
         String changeDescription = getStringUserInput(ChangeItem.MAX_DESCRIPTION, maxLengthValidator);
@@ -361,22 +378,126 @@ public class TextUI {
      * Displays a list of requesters and retrieves requester email
      */
     //---
-    public void selectRequester() {
-        String[] emails = manager.generateRequesterPage(1, 6);
-        for (int i = 0; i < emails.length; i++) {
-            if (emails[i] != null) {
-                System.out.println(i + 1 + ". " + emails[i]);
+    public String selectRequester() {
+        Scanner keyboard = new Scanner(System.in);
+        String requesterEmail = "";
+        String input = "";
+        int page = 0;
+
+        while (true) {
+
+            // list out requester emails
+            System.out.println("==Requester Emails==");
+            String[] emails = manager.generateRequesterPage(page, PAGE_SIZE);
+            for (int i = 0; i < emails.length; i++) {
+                if (emails[i] != null) {
+                    System.out.println(i + 1 + ") " + emails[i]);
+                }
+            }
+            System.out.println("0) Return to issue menu");
+            System.out.println("N) List next emails");
+            System.out.println("C) Create new requester");
+            System.out.println("Page[1/XX]==");
+            System.out.println("ENTER:");
+
+            input = keyboard.nextLine().toLowerCase();
+
+            switch (input) {
+                case "0":
+                    return null;
+                case "n":
+                    // reset to first page if it's the last
+                    try {
+                        page += 1;
+                        boolean exceedsFileSize = page * PAGE_SIZE * Requester.BYTES_SIZE_REQUESTER
+                                > manager.getRequesterFileSize();
+                        if (exceedsFileSize) {
+                            page = 0;
+                        }
+                    } catch (IOException e) {
+                        System.out.println("Error opening file");
+                    }
+                    break;
+                case "c":
+                    doAddRequester();
+                    break;
+                default:
+                    try {
+                        int selection = Integer.parseInt(input) - 1;
+                        boolean inputOk = selection >= 0 && selection <= emails.length;
+                        if (!inputOk) {
+                            System.out.println("Error: Please enter a valid selection");
+                        } else {
+                            requesterEmail = emails[selection];
+                            return requesterEmail;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error: Please enter a valid selection");
+                    }
+                    break;
             }
         }
     }
 
-    //-----------------------------
+        //-----------------------------
     /**
      * Displays a list of products and returns selected product name.
      */
     //---
     public String selectProduct() {
-        return "";
+        Scanner keyboard = new Scanner(System.in);
+        String productName = "";
+        String input = "";
+        int page = 0;
+
+        while (true) {
+            // list out product names
+            System.out.println("==Product==");
+            String[] products = manager.generateProductPage(page, PAGE_SIZE);
+            for (int i = 0; i < products.length; i++) {
+                if (products[i] != null) {
+                    System.out.println(i + 1 + ") " + products[i]);
+                }
+            }
+            System.out.println("0) Return to issue menu");
+            System.out.println("N) List next emails");
+            System.out.println("Page[1/XX]==");
+            System.out.println("ENTER:");
+
+            input = keyboard.nextLine().toLowerCase();
+
+            switch (input) {
+                case "0":
+                    return null;
+                case "n":
+                    // reset to first page if it's the last
+                    try {
+                        page += 1;
+                        boolean exceedsFileSize = page * PAGE_SIZE * Requester.BYTES_SIZE_REQUESTER
+                                >= manager.getProductFileSize();
+                        if (exceedsFileSize) {
+                            page = 0;
+                        }
+                    } catch (IOException e) {
+                        System.out.println("Error opening file");
+                    }
+                    break;
+                default:
+                    try {
+                        int selection = Integer.parseInt(input) - 1;
+                        boolean inputOk = selection >= 0 && selection <= products.length;
+                        if (!inputOk) {
+                            System.out.println("Error: Please enter a valid selection");
+                        } else {
+                            productName = products[selection];
+                            return productName;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error: Please enter a valid selection");
+                    }
+                    break;
+            }
+        }
     }
 
     //-----------------------------
@@ -385,16 +506,141 @@ public class TextUI {
      */
     //---
     public String selectRelease(String productName) {
-        return "";
+        Scanner keyboard = new Scanner(System.in);
+        String releaseName = "";
+        String lastReleaseName = "";
+        String input = "";
+        int page = 0;
+
+        while (true) {
+            // list out product names
+            System.out.println("==Release==");
+            String[] releases = manager.generateReleasePage(productName, lastReleaseName, page, PAGE_SIZE);
+            for (int i = 0; i < releases.length; i++) {
+                if (releases[i] != null) {
+                    System.out.println(i + 1 + ") " + releases[i]);
+                }
+            }
+            System.out.println("0) Return to issue menu");
+            System.out.println("N) List next releases");
+            System.out.println("Page[1/XX]==");
+            System.out.println("ENTER:");
+
+            input = keyboard.nextLine().toLowerCase();
+
+            switch (input) {
+                case "0":
+                    return null;
+                case "n":
+                    // reset to first page if it's the last
+                    try {
+                        page++;
+                        boolean exceedsFileSize = page * PAGE_SIZE * Release.BYTES_SIZE_RELEASE
+                                >= manager.getReleaseFileSize();
+                        if (exceedsFileSize) {
+                            page = 0;
+                            lastReleaseName = "";
+                        } else {
+                            lastReleaseName = releases[PAGE_SIZE - 1];
+                        }
+                    } catch (IOException e) {
+                        System.out.println("Error opening file");
+                    }
+                    break;
+                default:
+                    try {
+                        int selection = Integer.parseInt(input) - 1;
+                        boolean inputOk = selection >= 0 && selection <= releases.length;
+                        if (!inputOk) {
+                            System.out.println("Error: Please enter a valid selection");
+                        } else {
+                            releaseName = releases[selection];
+                            return releaseName;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error: Please enter a valid selection");
+                    }
+                    break;
+            }
+        }
     }
+
 
     //-----------------------------
     /**
      * Displays a list of change items based on provided release and returns changeID.
      */
     //---
-    public int selectChangeItem(String releaseID) {
-        return 0;
+    public int selectChangeItem(String productName, String releaseID) {
+        Scanner keyboard = new Scanner(System.in);
+        int lastChangeID = -1;
+        int changeID;
+        String input = "";
+        int page = 0;
+
+        while (true) {
+            // list out requester emails
+            System.out.println("Changes for " + productName.trim() + " " + releaseID.trim() + ":");
+            System.out.println("======================================================================================");
+            System.out.println("                                                                           Anticipated");
+            System.out.printf("  %10s  %-30s  %12s  %10s  %14s\n", "ChangeID", "Description", "Status", "Priority", " Release Date");
+            System.out.println("  ----------  ------------------------------  ------------  ----------  --------------");
+
+            ChangeItem[] changeItems = manager.generateChangeItemPage(productName, releaseID, lastChangeID, page, PAGE_SIZE);
+            for (int i = 0; i < changeItems.length; i++) {
+                if (changeItems[i] != null) {
+                    ChangeItem item = changeItems[i];
+                    System.out.print(i + 1 + ") ") ;
+                    System.out.printf("%9d  %-30s  %12s  %10s  %14s\n", item.getChangeID(), new String(item.getChangeDescription()),
+                            new String(item.getStatus()).trim(), item.getPriority(), item.getAnticipatedReleaseDate());
+                }
+            }
+            System.out.println("0) Return to issue menu");
+            System.out.println("N) List next emails");
+            System.out.println("C) Create new change item");
+            System.out.println("Page[1/XX]==");
+            System.out.println("ENTER:");
+
+            input = keyboard.nextLine().toLowerCase();
+
+            switch (input) {
+                case "0":
+                    return -1;
+                case "n":
+                    // reset to first page if it's the last
+                    try {
+                        page++;
+                        boolean exceedsFileSize = page * PAGE_SIZE * ChangeItem.BYTES_SIZE_CHANGE_ITEM
+                                > manager.getChangeFileSize();
+                        if (exceedsFileSize) {
+                            page = 0;
+                            lastChangeID = -1;
+                        } else if (changeItems[PAGE_SIZE - 1] != null) {
+                            lastChangeID = changeItems[PAGE_SIZE - 1].getChangeID();
+                        }
+                    } catch (IOException e) {
+                        System.out.println("Error opening file");
+                    }
+                    break;
+                case "c":
+                    doAddChangeItem(productName, releaseID);
+                    break;
+                default:
+                    try {
+                        int selection = Integer.parseInt(input) - 1;
+                        boolean inputOk = selection >= 0 && selection <= changeItems.length;
+                        if (!inputOk) {
+                            System.out.println("Error: Please enter a valid selection");
+                        } else {
+                            changeID = changeItems[selection].getChangeID();
+                            return changeID;
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error: Please enter a valid selection");
+                    }
+                    break;
+            }
+        }
     }
 
     //-----------------------------
