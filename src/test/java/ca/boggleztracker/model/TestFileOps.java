@@ -25,6 +25,7 @@ public class TestFileOps {
     //---
     public static void main(String[] args) {
         // TEST FOR REQUESTER
+        System.out.println("Starting Requester unit test:");
         Requester testerRequester = new Requester("testEmail@sfu.ca","Test Name", 16046041111L,"QA");
         try{
             RandomAccessFile myFile = new RandomAccessFile("UnitTest02Text.dat", "rw");
@@ -46,23 +47,24 @@ public class TestFileOps {
         }
 
         // TEST FOR CHANGEITEM
+        System.out.println("Starting ChangeItem unit test:");
         ChangeItem testerChangeItem = new ChangeItem(0,"TestProd","v1.0", "Test Description",'5', "Open", LocalDate.of(2024,8,8));
         try{
             RandomAccessFile myFile = new RandomAccessFile("UnitTest01Text.dat", "rw");
             myFile.seek(myFile.length());
             testerChangeItem.writeChangeItem(myFile);
-            System.out.println("writeRequester: TEST PASSED");
+            System.out.println("writeChangeItem: TEST PASSED");
         }catch(IOException e){
-            System.out.println("writeRequester: TEST FAILED");
+            System.out.println("writeChangeItem: TEST FAILED");
             System.err.println("Error opening record files " + e.getMessage());
         }
         try{
             RandomAccessFile myFile = new RandomAccessFile("UnitTest01Text.dat", "rw");
             myFile.seek(0);
             testerChangeItem.readChangeItems(myFile);
-            System.out.println("readRequester: TEST PASSED");
+            System.out.println("readChangeItem: TEST PASSED");
         }catch(IOException e){
-            System.out.println("readRequester: TEST FAILED");
+            System.out.println("readChangeItem: TEST FAILED");
             System.err.println("Error opening record files " + e.getMessage());
         }
     }
