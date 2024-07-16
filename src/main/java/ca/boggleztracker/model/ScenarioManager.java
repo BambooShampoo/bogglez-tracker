@@ -314,6 +314,28 @@ public class ScenarioManager {
             System.err.println("Error modifying change item to file " + e.getMessage());
         }
     }
+    // *********TEMPORARY FOR UNIT TEST, DELETE LATER
+    public void modifyChangeItem(RandomAccessFile myfile,int changeID, ChangeItem modifiedChangeItem) {
+        ChangeItem change = new ChangeItem();
+        int pos = 0;
+
+        try {
+            myfile.seek(pos);
+            //locate correct ChangeItem from file
+            while (true){
+                change.readChangeItems(myfile);
+
+                if (changeID == change.getChangeID()){
+                    break;
+                }
+                pos += ChangeItem.BYTES_SIZE_CHANGE_ITEM;
+            }
+            myfile.seek(pos);
+            modifiedChangeItem.writeChangeItem(myfile);
+        } catch (IOException e) {
+            System.err.println("Error modifying change item to file " + e.getMessage());
+        }
+    }
 
     //-----------------------------
     /**
