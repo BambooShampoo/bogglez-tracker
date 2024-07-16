@@ -101,8 +101,6 @@ public class ChangeItem {
     public char[] getStatus() {return status;}
 
     //-----------------------------
-
-    //-----------------------------
     /**
      * returns the product name of the object that it calls from.
      * @return (out) char[] - product name of the object
@@ -120,14 +118,32 @@ public class ChangeItem {
         return releaseID;
     }
 
+    //-----------------------------
+    /**
+     * returns the change description of the object that it calls from.
+     * @return (out) char[] - description of the object.
+     */
+    //---
     public char[] getChangeDescription() {
         return changeDescription;
     }
 
+    //-----------------------------
+    /**
+     * returns the priority of the object that it calls from.
+     * @return (out) char - priority of the object.
+     */
+    //---
     public char getPriority() {
         return priority;
     }
 
+    //-----------------------------
+    /**
+     * returns the date of the object that it calls from.
+     * @return (out) LocalDate - date of the object.
+     */
+    //---
     public LocalDate getAnticipatedReleaseDate() {
         return anticipatedReleaseDate;
     }

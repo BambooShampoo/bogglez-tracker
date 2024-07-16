@@ -13,7 +13,6 @@ package ca.boggleztracker;
 import ca.boggleztracker.model.ScenarioManager;
 import ca.boggleztracker.ui.TextUI;
 import java.io.IOException;
-import java.time.LocalDate;
 
 
 public class Main {
@@ -31,17 +30,7 @@ public class Main {
         try {
             ScenarioManager manager = new ScenarioManager();
             TextUI ui = new TextUI(manager);
-          
             ui.start();
-
-
-//            manager.readAllReleases();
-//            manager.readAllRequesters();
-//            manager.readAllProducts();
-//            manager.readAllReleases();
-//            manager.readAllChangeItem();
-//            manager.readAllChangeRequests();
-
         } catch (IOException e) {
             System.err.println("Error opening record files " + e.getMessage());
         }

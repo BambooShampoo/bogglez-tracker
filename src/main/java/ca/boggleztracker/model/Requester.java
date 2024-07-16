@@ -47,7 +47,6 @@ public class Requester {
     public Requester() {
     }
 
-
     //-----------------------------
     /**
      * Four argument constructor for Requester.
@@ -78,18 +77,6 @@ public class Requester {
     //---
     public char[] getEmail() {
         return email;
-    }
-
-    public char[] getName() {
-        return name;
-    }
-
-    public long getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public char[] getDepartment() {
-        return department;
     }
 
     //-----------------------------

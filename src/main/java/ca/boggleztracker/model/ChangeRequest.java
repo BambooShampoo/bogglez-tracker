@@ -67,10 +67,20 @@ public class ChangeRequest {
     // Methods
     //=============================
 
+    /**
+     * Getter method to retrieve requester email.
+     *
+     * @return (out) char[] - character array of requester email.
+     */
     public char[] getRequesterEmail() {
         return requesterEmail;
     }
 
+    /**
+     * Getter method to retrieve change ID.
+     *
+     * @return (out) int - change id.
+     */
     public int getChangeID() {
         return changeID;
     }

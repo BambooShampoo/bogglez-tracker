@@ -19,15 +19,12 @@
 
 package ca.boggleztracker.model;
 
-import org.w3c.dom.ls.LSOutput;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Random;
 
 public class ScenarioManager {
@@ -49,11 +46,6 @@ public class ScenarioManager {
     private final RandomAccessFile releaseFile;
     private final RandomAccessFile changeItemFile;
     private final RandomAccessFile changeRequestFile;
-    public ArrayList<Requester> requesterArray = new ArrayList<Requester>();
-    public ArrayList<String> productNameArray = new ArrayList<String>();
-    public ArrayList<String> releaseArray = new ArrayList<String>();
-    public int[] changeItemArray;
-    // pending changes and completed changes can go to change item array
 
     //=============================
     // Constructor
@@ -716,76 +708,6 @@ public class ScenarioManager {
             pos += ChangeRequest.BYTES_SIZE_CHANGE_REQUEST;
         }
         return pos;
-    }
-
-    // ****temporary testing method - delete later.
-    public void readAllChangeItem() throws IOException {
-        ChangeItem change = new ChangeItem();
-        changeItemFile.seek(0);
-        try {
-            while (true) {
-                change.readChangeItems(changeItemFile);
-                System.out.println(change);
-            }
-        } catch (EOFException e) {
-            System.out.println("\n");
-        }
-    }
-
-    // ****temporary testing method - delete later.
-    public void readAllRequesters() throws IOException {
-        Requester r = new Requester();
-        requesterFile.seek(0);
-        try {
-            while (true) {
-                r.readRequester(requesterFile);
-                System.out.println(r);
-            }
-        } catch (EOFException e) {
-            System.out.println("\n");
-        }
-    }
-
-    // ****temporary testing method - delete later.
-    public void readAllProducts() throws IOException {
-        Product p = new Product();
-        productFile.seek(0);
-        try {
-            while (true) {
-                p.readProduct(productFile);
-                System.out.println(p);
-            }
-        } catch (EOFException e) {
-            System.out.println("\n");
-        }
-    }
-
-    // ****temporary testing method - delete later.
-    public void readAllReleases() throws IOException {
-        Release r = new Release();
-        releaseFile.seek(0);
-        try {
-            while (true) {
-                r.readRelease(releaseFile);
-                System.out.println(r);
-            }
-        } catch (EOFException e) {
-            System.out.println("\n");
-        }
-    }
-
-    // ****temporary testing method - delete later.
-    public void readAllChangeRequests() throws IOException {
-        ChangeRequest r = new ChangeRequest();
-        changeRequestFile.seek(0);
-        try {
-            while (true) {
-                r.readChangeRequest(changeRequestFile);
-                System.out.println(r);
-            }
-        } catch (EOFException e) {
-            System.out.println("\n");
-        }
     }
 
     //-----------------------------

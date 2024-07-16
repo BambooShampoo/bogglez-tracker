@@ -430,7 +430,7 @@ public class TextUI {
                     System.out.printf("%-24s\n", emails[i]);
                 }
             }
-            System.out.println("0) Return to issue menu");
+            System.out.println("0) Return to report menu");
             System.out.println("N) List next emails");
             System.out.println("ENTER:");
 
@@ -473,7 +473,6 @@ public class TextUI {
             System.out.println("0) Return to issue menu");
             System.out.println("N) List next emails");
             System.out.println("C) Create new requester");
-            System.out.println("Page[1/XX]==");
             System.out.println("ENTER:");
 
             input = keyboard.nextLine().toLowerCase();
