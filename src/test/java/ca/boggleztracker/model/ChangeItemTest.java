@@ -21,7 +21,7 @@ class ChangeItemTest {
     public String releaseID = "v1.0";
     public String productName = "mySoftware";
     public String changeDescription = "Menu not populating";
-    public int priority = 5;
+    public char priority = '5';
     public String status = "Open";
     public LocalDate anticipatedReleaseDate = LocalDate.parse("2020-01-08");
     public String filename = "UnitTest01Text.dat";
