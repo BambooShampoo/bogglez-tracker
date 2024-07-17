@@ -371,7 +371,7 @@ public class ScenarioManager {
             while (true){
                 fileRelease.readRelease(releaseFile);
                 // convert char[] to String
-                String releaseIDToBeChanged = String.valueOf(fileRelease.getReleaseID()).trim();
+                String releaseIDToBeChanged = new String(fileRelease.getReleaseID());
                 if (releaseID.equals(releaseIDToBeChanged)) {
                     break;
                 }

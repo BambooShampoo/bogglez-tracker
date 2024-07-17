@@ -201,7 +201,7 @@ public class TextUI {
 
         System.out.println("Enter priority (1 - 5 or '')");
         char priority = getValidPriorityUserInput(maxLengthValidator);
-        System.out.println("Enter release date (yyyy-mm-dd or '')");
+        System.out.println("Enter anticipated release date (yyyy-mm-dd or '')");
         LocalDate anticipatedReleaseDate = getValidLocalDateInputOrNull();
 
         // confirmation of creation
@@ -242,7 +242,7 @@ public class TextUI {
 
         System.out.println("Enter priority (1 - 5 or '')");
         char priority = getValidPriorityUserInput(maxLengthValidator);
-        System.out.println("Enter release date (yyyy-mm-dd or '')");
+        System.out.println("Enter anticipated release date (yyyy-mm-dd or '')");
         LocalDate anticipatedReleaseDate = getValidLocalDateInputOrNull();
 
         // confirmation of modification
@@ -311,7 +311,7 @@ public class TextUI {
             return;
         }
 
-        System.out.println("Enter new release ID for product " + productName + " (length: 8 max)");
+        System.out.println("Enter new release ID for product " + productName.trim() + " (length: 8 max)");
         String releaseID = getStringUserInput(Release.MAX_RELEASE_ID, maxLengthValidator);
         System.out.println("Enter release date (yyyy-mm-dd)");
         LocalDate releaseDate = getValidLocalDateInput();
@@ -347,7 +347,7 @@ public class TextUI {
         LocalDate releaseDate = getValidLocalDateInput();
 
         // confirmation of modification
-        System.out.println("Confirming entry of modified release ID " + releaseID + "?" + " (Y/N)");
+        System.out.println("Confirming entry of modified release ID " + releaseID.trim() + "?" + " (Y/N)");
         if (getYesOrNoUserInput()) {
             Release release = new Release(productName, releaseID, releaseDate);
             manager.modifyRelease(releaseID, release);
@@ -543,7 +543,7 @@ public class TextUI {
                 }
             }
             System.out.println("0) Return to issue menu");
-            System.out.println("N) List next emails");
+            System.out.println("N) List next products");
             System.out.println("ENTER:");
 
             input = keyboard.nextLine().toLowerCase();
@@ -675,7 +675,7 @@ public class TextUI {
                 }
             }
             System.out.println("0) Return to issue menu");
-            System.out.println("N) List next changes");
+            System.out.println("N) List next change items");
             System.out.println("C) Create new change item");
             System.out.println("ENTER:");
 
