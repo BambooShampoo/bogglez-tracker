@@ -80,6 +80,20 @@ public class Requester {
     }
 
     //-----------------------------
+
+    //-----------------------------
+    /**
+     * Getter method for Requester name char array.
+     *
+     * @return (out) char[] - name char array of requester.
+     */
+    //---
+    public char[] getName() {
+        return name;
+    }
+
+    //-----------------------------
+
     /**
      * Writes the contents of Request object to the Request file.
      *

@@ -647,12 +647,18 @@ public class ScenarioManager {
     //-----------------------------
     /**
      * Gets a list of all completed changes for customer notification.
+     * Gets a list of all requester emails & names for a specific change item
+     * tracked by change ID
      */
     //---
-    public String[] generateEmailsPage(int changeID, String lastEmail, int pageSize) {
-        String[] emails = new String[pageSize];
+    public Requester[] generateEmailsPage(int changeID, String lastEmail, int pageSize) {
+        Requester[] emails = new Requester[pageSize];
+        String thisEmail;
+        String compEmail; // compared email from change request file
+        String thisName;
 
          ChangeRequest request = new ChangeRequest();
+         Requester requester = new Requester();
 
         // get the starting position in file
         try {
@@ -662,6 +668,45 @@ public class ScenarioManager {
             System.err.println("Error in finding change request page" + e.getMessage());
         }
 
+        int itemCounter = 0;
+
+        while (itemCounter < pageSize) {
+            try {
+                request.readChangeRequest(changeRequestFile);
+                compEmail = new String(request.getRequesterEmail());
+
+                while (true) {
+                    requester.readRequester(requesterFile);
+                    thisEmail = new String(requester.getEmail());
+
+                    if (thisEmail == compEmail) {
+                        emails[itemCounter] = requester;
+                        itemCounter++;
+                        break;
+                    }
+
+                }
+
+            } catch (EOFException e) {
+                // do nothing
+            } catch (IOException e) {
+                System.err.println("Error in reading file" + e.getMessage());
+            }
+        }
+
+// WORK IN PROGRESS WILL COME BACK TO IT -LINUS
+        return;
+        /* ramblings of the delusional below
+        * starting from the last email, use change ID to a change request that matches ID
+        * pull email from there and store into string email var
+        * open requester file, linear search for name associated with email :skull:
+        * store that into string name var
+        * create a new requester object with these two vars
+        * store into a ArrayList<Requester>
+         */
+
+
+        /*
         int emailCounter = 0;
         while (emailCounter < pageSize) {
             try {
@@ -678,7 +723,7 @@ public class ScenarioManager {
             }
         }
         return emails;
-
+        */
     }
 
     //-----------------------------
