@@ -675,7 +675,7 @@ public class ScenarioManager {
                 request.readChangeRequest(changeRequestFile);
                 compEmail = new String(request.getRequesterEmail());
 
-                while (true) {
+                while (true) { // not a good solution
                     requester.readRequester(requesterFile);
                     thisEmail = new String(requester.getEmail());
 
@@ -684,7 +684,6 @@ public class ScenarioManager {
                         itemCounter++;
                         break;
                     }
-
                 }
 
             } catch (EOFException e) {
@@ -695,7 +694,7 @@ public class ScenarioManager {
         }
 
 // WORK IN PROGRESS WILL COME BACK TO IT -LINUS
-        return;
+        return emails;
         /* ramblings of the delusional below
         * starting from the last email, use change ID to a change request that matches ID
         * pull email from there and store into string email var
