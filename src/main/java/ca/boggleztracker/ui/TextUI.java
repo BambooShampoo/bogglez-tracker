@@ -411,23 +411,24 @@ public class TextUI {
         }
 
         Scanner keyboard = new Scanner(System.in);
-        String input = "";
+        String input;
         String lastEmail = null;
 
 
         while (true) {
             System.out.println("Requester Emails to Notify:");
-            System.out.println("===========================");
-            System.out.printf("  %-24s\n", "Emails");
-            System.out.println("  ------------------------");
+            System.out.println("==========================================================================");
+            System.out.printf("   %-30s  %-24s  %-14s\n", "Name", "Emails", "Phone Number");
+            System.out.println("   ------------------------------  ------------------------  --------------");
 
-            String[] emails = manager.generateEmailsPage(changeID, lastEmail, PAGE_SIZE);
+            Requester[] requesters = manager.generateEmailsPage(changeID, lastEmail, PAGE_SIZE);
 
 
-            for (int i = 0; i < emails.length; i++) {
-                if (emails[i] != null) {
-                    System.out.print(i + 1 + ") ") ;
-                    System.out.printf("%-24s\n", emails[i]);
+            for (int i = 0; i < requesters.length; i++) {
+                if (requesters[i] != null) {
+                    System.out.print(i + 1 + ")") ;
+                    System.out.printf(" %-30s  %-24s  %-14s\n", new String(requesters[i].getName()), new String(requesters[i].getEmail()),
+                            requesters[i].formatPhoneNumber());
                 }
             }
             System.out.println("0) Return to report menu");
@@ -440,8 +441,11 @@ public class TextUI {
                 case "0":
                     return;
                 case "n":
-                    // reset to first page if it's the last
-                    lastEmail = emails[PAGE_SIZE - 1];
+                    if (requesters[PAGE_SIZE -1] == null) {
+                        lastEmail = null;
+                    } else {
+                        lastEmail = new String(requesters[PAGE_SIZE - 1].getEmail());
+                    }
                     break;
                 default:
                     break;
@@ -452,12 +456,14 @@ public class TextUI {
     //-----------------------------
     /**
      * Displays a list of requesters and retrieves requester email
+     *
+     * @return (out) String - the selected requester email.
      */
     //---
     public String selectRequester() {
         Scanner keyboard = new Scanner(System.in);
-        String requesterEmail = "";
-        String input = "";
+        String requesterEmail;
+        String input;
         int page = 0;
 
         while (true) {
@@ -514,15 +520,17 @@ public class TextUI {
         }
     }
 
-        //-----------------------------
+    //-----------------------------
     /**
      * Displays a list of products and returns selected product name.
+     *
+     * @return (out) String - the selected product name.
      */
     //---
     public String selectProduct() {
         Scanner keyboard = new Scanner(System.in);
-        String productName = "";
-        String input = "";
+        String productName;
+        String input;
         int page = 0;
 
         while (true) {
@@ -577,6 +585,8 @@ public class TextUI {
     //-----------------------------
     /**
      * Displays a list of product releases based on provided product and returns selected release.
+     *
+     * @return (out) String - the selected release ID.
      */
     //---
     public String selectRelease(String productName) {
@@ -605,7 +615,7 @@ public class TextUI {
                     return null;
                 case "n":
                     // reset to first page if it's the last
-                    lastReleaseName = new String(releases[PAGE_SIZE - 1]);
+                    lastReleaseName = releases[PAGE_SIZE - 1];
                     break;
                 default:
                     try {
@@ -629,6 +639,8 @@ public class TextUI {
     //-----------------------------
     /**
      * Displays a list of change items based on provided release and returns changeID.
+     *
+     * @return (out) int - The selected change ID.
      */
     //---
     public int selectChangeItem(String productName, String releaseID, String mode) {
@@ -636,17 +648,15 @@ public class TextUI {
         ChangeItem[] changeItems;
         int lastChangeID = -1;
         int changeID;
-        String input = "";
+        String input;
 
         while (true) {
             // list out changes
             System.out.println("Changes for " + productName.trim() + " " + releaseID.trim() + ":");
-            System.out.println("======================================================================================");
-            System.out.println("                                                                           Anticipated");
-            System.out.printf("  %10s  %-30s  %12s  %10s  %14s\n", "ChangeID", "Description", "Status", "Priority", " Release Date");
-            System.out.println("  ----------  ------------------------------  ------------  ----------  --------------");
-
-
+            System.out.println("=======================================================================================");
+            System.out.println("                                                                            Anticipated");
+            System.out.printf("   %10s  %-30s  %12s  %10s  %14s\n", "ChangeID", "Description", "Status", "Priority", " Release Date");
+            System.out.println("   ----------  ------------------------------  ------------  ----------  --------------");
 
             if (mode.equals("pending")) {
                 changeItems = manager.generateFilteredChangesPage(productName, lastChangeID, PAGE_SIZE, mode);
@@ -656,13 +666,11 @@ public class TextUI {
                 changeItems = manager.generateChangeItemPage(productName, releaseID, lastChangeID, PAGE_SIZE);
             }
 
-
-
             for (int i = 0; i < changeItems.length; i++) {
                 if (changeItems[i] != null) {
                     ChangeItem item = changeItems[i];
                     System.out.print(i + 1 + ") ") ;
-                    System.out.printf("%9d  %-30s  %12s  %10s  %14s\n", item.getChangeID(), new String(item.getChangeDescription()),
+                    System.out.printf(" %9d  %-30s  %12s  %10s  %14s\n", item.getChangeID(), new String(item.getChangeDescription()),
                             new String(item.getStatus()).trim(), item.getPriority(), item.getAnticipatedReleaseDate());
                 }
             }
@@ -673,6 +681,7 @@ public class TextUI {
 
             input = keyboard.nextLine().toLowerCase();
 
+            // handling user input
             switch (input) {
                 case "0":
                     return -1;
@@ -697,7 +706,7 @@ public class TextUI {
                             changeID = changeItems[selection].getChangeID();
                             return changeID;
                         }
-                    } catch (NumberFormatException e) {
+                    } catch (NullPointerException e) {
                         System.out.println("Error: Please enter a valid selection");
                     }
                     break;

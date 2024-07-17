@@ -93,6 +93,18 @@ public class Requester {
     }
 
     //-----------------------------
+    /**
+     * Formats phone number long type into a String.
+     *
+     * @return (out) String - formatted phone number.
+     */
+    //---
+    public String formatPhoneNumber() {
+        String phone = String.valueOf(phoneNumber);
+        return phone.charAt(0) + "-" + phone.substring(1, 4) + "-" + phone.substring(4, 7) + "-" + phone.substring(7);
+    }
+
+    //-----------------------------
 
     /**
      * Writes the contents of Request object to the Request file.

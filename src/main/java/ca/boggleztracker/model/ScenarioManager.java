@@ -68,10 +68,26 @@ public class ScenarioManager {
     // Methods
     //=============================
 
+    //-----------------------------
+    /**
+     * Get the size of requester file.
+     *
+     * @return (out) long - requester file size
+     * @throws IOException
+     */
+    //---
     public long getRequesterFileSize() throws IOException {
         return requesterFile.length();
     }
 
+    //-----------------------------
+    /**
+     * Get the size of product file.
+     *
+     * @return (out) long - product file size
+     * @throws IOException
+     */
+    //---
     public long getProductFileSize() throws IOException {
         return productFile.length();
     }
@@ -151,6 +167,7 @@ public class ScenarioManager {
      *
      * @param file (in) RandomAccessFile - file to read char array from.
      * @param numChars (in) int - number of bytes the char array consists of.
+     * @return (out) char[] - character array read from file
      */
     //---
     public static char[] readCharsFromFile(RandomAccessFile file, int numChars) throws IOException {
@@ -168,6 +185,7 @@ public class ScenarioManager {
      * Helper function to read local dates from file.
      *
      * @param file (in) RandomAccessFile - file to read local date from.
+     * @return (out) LocalDate - date from file.
      */
     //---
     public static LocalDate readDateFromFile(RandomAccessFile file) throws IOException {
@@ -311,6 +329,7 @@ public class ScenarioManager {
             System.err.println("Error modifying change item to file " + e.getMessage());
         }
     }
+
     // *********TEMPORARY FOR UNIT TEST, DELETE LATER
     public void modifyChangeItem(RandomAccessFile myfile,int changeID, ChangeItem modifiedChangeItem) {
         ChangeItem change = new ChangeItem();
@@ -464,7 +483,7 @@ public class ScenarioManager {
      * @param productName (in) String - productName of specified release.
      * @param lastReleaseName (in) String - last release of previous page.
      * @param pageSize (in) int - How many items of data each page can hold.
-     * @return (out) String - String array of releases of specific product.
+     * @return (out) String[] - String array of releases of specific product.
      */
     //---
     public String[] generateReleasePage(String productName, String lastReleaseName, int pageSize) {
@@ -534,6 +553,7 @@ public class ScenarioManager {
      * @param releaseID (in) String - Release ID for specified change item.
      * @param lastChangeItem (in) int - last change item of previous page.
      * @param pageSize (in) int - How many items of data each page can hold.
+     * @return (out) ChangeItem[] - array of change items
      */
     //---
     public ChangeItem[] generateChangeItemPage(String productName, String releaseID, int lastChangeItem, int pageSize) {
@@ -600,9 +620,13 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
-     * Get s a list of all pending change items of a specific product.
+     * Get s a list of all filtered change items of a specific product.
      *
      * @param productName (in) String - Product name reference to find all pending changes.
+     * @param lastChangeItem (in) int - Last change item of previous page.
+     * @param pageSize (in) int - How many items of data each page can hold.
+     * @param mode (in) String - type of filtering.
+     * @return (out) ChangeItem[] - array of filtered change items
      */
     //---
     public ChangeItem[] generateFilteredChangesPage(String productName, int lastChangeItem, int pageSize, String mode) {
@@ -649,16 +673,18 @@ public class ScenarioManager {
      * Gets a list of all completed changes for customer notification.
      * Gets a list of all requester emails & names for a specific change item
      * tracked by change ID
+     *
+     * @param changeID (in) int - Change item reference.
+     * @param lastEmail (in) String - Last email of previous page.
+     * @param pageSize (in) int - How many items of data each page can hold.
+     * @return (out) Requester[] - Requester array of requesters to notify.
      */
     //---
     public Requester[] generateEmailsPage(int changeID, String lastEmail, int pageSize) {
         Requester[] emails = new Requester[pageSize];
-        String thisEmail;
         String compEmail; // compared email from change request file
-        String thisName;
 
          ChangeRequest request = new ChangeRequest();
-         Requester requester = new Requester();
 
         // get the starting position in file
         try {
@@ -673,56 +699,48 @@ public class ScenarioManager {
         while (itemCounter < pageSize) {
             try {
                 request.readChangeRequest(changeRequestFile);
-                compEmail = new String(request.getRequesterEmail());
-
-                while (true) { // not a good solution
-                    requester.readRequester(requesterFile);
-                    thisEmail = new String(requester.getEmail());
-
-                    if (thisEmail == compEmail) {
-                        emails[itemCounter] = requester;
+                if (request.getChangeID() == changeID) {
+                    compEmail = new String(request.getRequesterEmail());
+                    Requester tempRequester = findRequesterByEmail(compEmail);
+                    if (tempRequester != null) {
+                        emails[itemCounter] = tempRequester;
                         itemCounter++;
-                        break;
                     }
-                }
-
-            } catch (EOFException e) {
-                // do nothing
-            } catch (IOException e) {
-                System.err.println("Error in reading file" + e.getMessage());
-            }
-        }
-
-// WORK IN PROGRESS WILL COME BACK TO IT -LINUS
-        return emails;
-        /* ramblings of the delusional below
-        * starting from the last email, use change ID to a change request that matches ID
-        * pull email from there and store into string email var
-        * open requester file, linear search for name associated with email :skull:
-        * store that into string name var
-        * create a new requester object with these two vars
-        * store into a ArrayList<Requester>
-         */
-
-
-        /*
-        int emailCounter = 0;
-        while (emailCounter < pageSize) {
-            try {
-                request.readChangeRequest(changeRequestFile);
-                int tempChangeID = request.getChangeID();
-                if (tempChangeID == changeID) {
-                    emails[emailCounter] = new String(request.getRequesterEmail());
-                    emailCounter++;
                 }
             } catch (EOFException e) {
                 break;
             } catch (IOException e) {
-                System.err.println("Error in reading from file" + e.getMessage());
+                System.err.println("Error in reading file" + e.getMessage());
             }
         }
         return emails;
-        */
+    }
+
+    //-----------------------------
+    /**
+     * Searches requester file for specific email.
+     *
+     * @param email (in) String - email of requester.
+     * @return (out) Requester - The requester object.
+     * @throws IOException
+     */
+    //---
+    private Requester findRequesterByEmail(String email) throws IOException {
+        requesterFile.seek(0); // Start at the beginning of the requester file
+        Requester requester = new Requester();
+
+        try {
+            while (true) {
+                requester.readRequester(requesterFile);
+                String requesterEmail = new String(requester.getEmail());
+                if (email.equals(requesterEmail)) {
+                    return requester;
+                }
+            }
+        } catch (EOFException e) {
+            // End of file reached, requester not found
+        }
+        return null;
     }
 
     //-----------------------------
@@ -743,8 +761,8 @@ public class ScenarioManager {
         if (lastEmail != null) {
             while (true) {
                 request.readChangeRequest(changeRequestFile);
-                String startingPostionOfChangeRequest = new String(request.getRequesterEmail());
-                if (lastEmail.equals(startingPostionOfChangeRequest)) {
+                String startingPositionOfChangeRequest = new String(request.getRequesterEmail());
+                if (lastEmail.equals(startingPositionOfChangeRequest)) {
                     break;
                 }
                 pos += ChangeRequest.BYTES_SIZE_CHANGE_REQUEST;
