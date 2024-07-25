@@ -31,15 +31,16 @@ class ChangeItemTest {
     //=============================
 
     //-----------------------------
-/*
-*  Description: unit test to test the creation of the change item (constructor).
-*  Precondition: UnitTest01Text.dat contains no records.
- */
+    /*
+    *  Description: unit test to test the creation of the change item (constructor).
+    *  Precondition: UnitTest01Text.dat contains no records.
+    */
     void createANewChangeItem() {
         ChangeItem changeItem = new ChangeItem(changeID, releaseID, productName, changeDescription,
                 priority, status, anticipatedReleaseDate);
         System.out.println(changeItem.toString());
     }
+
     //-----------------------------
     /*
     *   Description: Unit test to test the writing of a change item to a random access file.
@@ -56,6 +57,7 @@ class ChangeItemTest {
             System.out.println("File not found\n");
         }
     }
+
     //-----------------------------
     /*
     *   Description: Unit test to test the reading of a single change item from a random access file
@@ -76,12 +78,13 @@ class ChangeItemTest {
             System.out.println("File not found\n");
         }
     }
+
     //-----------------------------
-/*
-*   Description: Unit test to test if the changeItemExists method reads and checks for change item
-*   Precondition: If UnitTest01Text.dat is empty return false. If UnitText01Text.dat contains
-*                 a single record with the variables initialized above, returns true.
- */
+    /*
+    *   Description: Unit test to test if the changeItemExists method reads and checks for change item
+    *   Precondition: If UnitTest01Text.dat is empty return false. If UnitText01Text.dat contains
+    *                 a single record with the variables initialized above, returns true.
+    */
     /*
     void checkIfChangeItemExists() {
         ChangeItem changeItem = new ChangeItem(releaseID, productName, changeDescription,
@@ -95,7 +98,7 @@ class ChangeItemTest {
         }
     }
 
-     */
+    */
 
     public static void main (String [] args) {
         ChangeItemTest test = new ChangeItemTest();

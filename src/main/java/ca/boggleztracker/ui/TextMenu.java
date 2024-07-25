@@ -3,6 +3,7 @@
  * Revision History:
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-09: Modified getSelection() method
+ * - 2024:07-25: Documentation changes and moved static method above constructor
  * Purpose:
  * TextMenu class is responsible for displaying and handling user input of the various menus.
  * This class uses an array of MenuEntry objects to represent menu options and their
@@ -58,6 +59,32 @@ public class TextMenu {
             this.text = text;
             this.action = action;
         }
+    }
+
+    /**
+     * Gets a valid user input based on menu range.
+     *
+     * @param min (in) int - minimum number user input can be.
+     * @param max (in) out - maximum number user input can be.
+     * @return (out) int - returns the selection of user.
+     */
+    static public int getNumberBetween(int min, int max) {
+        System.out.println("ENTER [" + min + "-" + max + "]:");
+        System.out.print("> ");
+        Scanner keyboard = new Scanner(System.in);
+        boolean inputOk;
+        int selection;
+
+        while (true) {
+            selection = keyboard.nextInt();
+            inputOk = selection >= min && selection <= max;
+            if (!inputOk) {
+                System.out.println("Error: Please enter a selection between " + min + " and " + max);
+            } else {
+                break;
+            }
+        }
+        return selection;
     }
 
     //=============================
@@ -124,36 +151,12 @@ public class TextMenu {
     //-----------------------------
     /**
      * Responsible for getting user menu selection.
+     *
+     * @return (out) int - user input selection number.
      */
     //---
     public int getSelection() {
         return getNumberBetween(MINIMUM_SELECTION_NUMBER, entries.length);
-    }
-
-    /**
-     * Gets a valid user input based on menu range.
-     *
-     * @param min (in) int - minimum number user input can be.
-     * @param max (in) out - maximum number user input can be.
-     * @return (out) int - returns the selection of user.
-     */
-    static public int getNumberBetween(int min, int max) {
-        System.out.println("ENTER [" + min + "-" + max + "]:");
-        System.out.print("> ");
-        Scanner keyboard = new Scanner(System.in);
-        boolean inputOk;
-        int selection;
-
-        while (true) {
-            selection = keyboard.nextInt();
-            inputOk = selection >= min && selection <= max;
-            if (!inputOk) {
-                System.out.println("Error: Please enter a selection between " + min + " and " + max);
-            } else {
-                break;
-            }
-        }
-        return selection;
     }
 
     //-----------------------------

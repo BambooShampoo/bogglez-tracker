@@ -11,6 +11,7 @@
  * - 2024-07-13: implemented all add methods with uniqueness check
  * - 2024-07-14: implemented generateRequesterPage method
  * - 2024-07-15: implemented all generate pages methods
+ * - 2024-07-25: documentation changes
  * Purpose:
  * ScenarioManager class is responsible for opening and closing the data file,
  * populating the array lists of products and requesters, and supports various interactions

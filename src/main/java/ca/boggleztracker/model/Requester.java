@@ -125,6 +125,7 @@ public class Requester {
      *
      * @param file (in) RandomAccessFile - The file to read from.
      * @param email (in) String - The email to be checked.
+     * @return (out) boolean - Whether the requester exists.
      */
     //---
     public static boolean requesterExists(RandomAccessFile file, String email) throws IOException {
