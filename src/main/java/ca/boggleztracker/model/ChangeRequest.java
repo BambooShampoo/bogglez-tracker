@@ -5,6 +5,7 @@
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-06: writeChangeRequest implementation
  * - 2024-07-08: readChangeRequest implementation
+ * - 2024-07-25: documentation changes
  * Purpose:
  * ChangeRequest class represents a change request of a product, storing data such as
  * reported date and the requester.
@@ -20,7 +21,7 @@ public class ChangeRequest {
     //=============================
     // Constants and static fields
     //=============================
-    public static final int BYTES_SIZE_CHANGE_REQUEST = 108;
+    public static final int BYTES_SIZE_CHANGE_REQUEST = 108; // accessed to calculate start position in file seeking
 
     //=============================
     // Member fields

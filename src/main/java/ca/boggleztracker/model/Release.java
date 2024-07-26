@@ -5,6 +5,7 @@
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-06: writeRelease implementation
  * - 2024-07-08: readRelease implementation
+ * - 2024-07-25: documentation changes
  * Purpose:
  * Release class represents a release of a product in the system and is responsible for
  * managing the change items of the release. The class stores data such as release ID,
@@ -22,8 +23,9 @@ public class Release {
     //=============================
     // Constants and static fields
     //=============================
-    public static final int MAX_RELEASE_ID = 8;
-    public static final long BYTES_SIZE_RELEASE = 56;
+    public static final int MAX_RELEASE_ID = 8; // used to limit user input length in TextUI
+    public static final long BYTES_SIZE_RELEASE = 56; // used to calculate position in scenarioManager
+
     //=============================
     // Member fields
     //=============================
@@ -75,6 +77,7 @@ public class Release {
     //-----------------------------
     /**
      * returns the ReleaseID of the object that it calls from.
+     * @return (out) char[] - the associated release ID.
      */
     //---
     public char[] getReleaseID() {

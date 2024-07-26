@@ -5,6 +5,7 @@
  * - 2024-07-02: System redesign remove storing records into RAM
  * - 2024-07-04: writeProduct implementation
  * - 2024-07-08: readProduct implementation
+ * - 2024-07-25: documentation changes & static method moved above constructor
  * Purpose:
  * Product class represents a product in the system and is responsible for
  * managing the releases of the product. The class stores data such as product name
@@ -21,12 +22,39 @@ public class Product {
     //=============================
     // Constants and static fields
     //=============================
-    public static final int MAX_PRODUCT_NAME = 10;
-    public static final long BYTES_SIZE_PRODUCT = 20;
+    public static final int MAX_PRODUCT_NAME = 10; // used to limit input string length for TextUI
+    public static final long BYTES_SIZE_PRODUCT = 20; // used to calculate seek position on file
+
     //=============================
     // Member fields
     //=============================
     private char[] productName;
+
+    //-----------------------------
+    /**
+     * Checks file to see if email already exists.
+     *
+     * @param file (in) RandomAccessFile - The file to read from.
+     * @param productName (in) String - The product name is checked.
+     * @return (out) boolean - Whether the product exists or not.
+     */
+    //---
+    public static boolean productExists(RandomAccessFile file, String productName) throws IOException {
+        Product product = new Product();
+        boolean productExists = false;
+        char[] temp = ScenarioManager.padCharArray(productName.toCharArray(), MAX_PRODUCT_NAME);
+        file.seek(0);
+        try {
+            while (true) {
+                product.readProduct(file);
+                if (Arrays.equals(temp, product.getProductName())) {
+                    productExists = true;
+                }
+            }
+        } catch (EOFException e) {
+            return productExists;
+        }
+    }
 
     //=============================
     // Constructors
@@ -76,31 +104,6 @@ public class Product {
     //---
     public void writeProduct(RandomAccessFile file) throws IOException {
         file.writeChars(new String(productName));
-    }
-
-    //-----------------------------
-    /**
-     * Checks file to see if email already exists.
-     *
-     * @param file (in) RandomAccessFile - The file to read from.
-     * @param productName (in) String - The product name is checked.
-     */
-    //---
-    public static boolean productExists(RandomAccessFile file, String productName) throws IOException {
-        Product product = new Product();
-        boolean productExists = false;
-        char[] temp = ScenarioManager.padCharArray(productName.toCharArray(), MAX_PRODUCT_NAME);
-        file.seek(0);
-        try {
-            while (true) {
-                product.readProduct(file);
-                if (Arrays.equals(temp, product.getProductName())) {
-                    productExists = true;
-                }
-            }
-        } catch (EOFException e) {
-            return productExists;
-        }
     }
 
     //-----------------------------

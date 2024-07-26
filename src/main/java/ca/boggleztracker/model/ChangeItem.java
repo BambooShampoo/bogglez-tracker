@@ -8,6 +8,7 @@
  * - 2024-07-08: readChangeItem implementation
  * - 2024-07-09: moved generateRandomChangeID to Scenario Manager and made empty constructor for changeItem
  * - 2024-07-15: created two getters for status and product name for use in scenario manager
+ * - 2024-07-25: documentation changes
  * Purpose:
  * ChangeItem class represents a change item of a particular product release and is responsible for
  * managing the change requests of the change item. The class stores data such as changeID, priority
@@ -24,10 +25,9 @@ public class ChangeItem {
     //=============================
     // Constants and static fields
     //=============================
-    public static final int MAX_DESCRIPTION = 30;
+    public static final int MAX_DESCRIPTION = 30; // accessed in TextUI
     public static final int MAX_STATUS = 12;
-    public static final long BYTES_SIZE_CHANGE_ITEM = 146;
-
+    public static final long BYTES_SIZE_CHANGE_ITEM = 146; // accessed in scenario manager
 
     //=============================
     // Member fields

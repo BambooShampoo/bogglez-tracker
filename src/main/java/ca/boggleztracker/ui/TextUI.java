@@ -103,8 +103,8 @@ public class TextUI {
         // anonymous classes that implement the InputValidator interface
         // these are passed to the getUserInputString to determine length checking
         // (Strategy Pattern)
-        InputValidator maxLengthValidator = (input, length) -> input.length() <= length;
-        InputValidator exactLengthValidator = (input, length) -> input.length() == length;
+        InputValidator maxLengthValidator = (input, length) -> input.length() <= length && !input.isEmpty();
+        InputValidator exactLengthValidator = (input, length) -> input.length() == length && !input.isEmpty();
 
         // requester name user input
         System.out.println("Enter requester name (length: 30 max)");
@@ -194,7 +194,9 @@ public class TextUI {
      */
     //---
     public void doAddChangeItem(String productName, String releaseID) {
-        InputValidator maxLengthValidator = (input, length) -> input.length() <= length;
+        InputValidator maxLengthValidator = (input, length) -> input.length() <= length && !input.isEmpty();
+        // for priority user input case
+        InputValidator maxLengthValidatorWithoutEmptyCheck = (input, length) -> input.length() <= length;
 
         System.out.println("Enter change description (length: 30 max)");
         String changeDescription = getStringUserInput(ChangeItem.MAX_DESCRIPTION, maxLengthValidator);
@@ -202,7 +204,7 @@ public class TextUI {
         String status = getValidStatusUserInput(maxLengthValidator);
 
         System.out.println("Enter priority (1 - 5 or '')");
-        char priority = getValidPriorityUserInput(maxLengthValidator);
+        char priority = getValidPriorityUserInput(maxLengthValidatorWithoutEmptyCheck);
         System.out.println("Enter anticipated release date (yyyy-mm-dd or '')");
         LocalDate anticipatedReleaseDate = getValidLocalDateInputOrNull();
 
@@ -223,7 +225,8 @@ public class TextUI {
      */
     //---
     public void doModifyIssue() {
-        InputValidator maxLengthValidator = (input, length) -> input.length() <= length;
+        InputValidator maxLengthValidator = (input, length) -> input.length() <= length && !input.isEmpty();
+        InputValidator maxLengthValidatorWithoutEmptyCheck = (input, length) -> input.length() <= length;
 
         String productName = selectProduct();
         if (productName == null) {
@@ -243,7 +246,7 @@ public class TextUI {
         String status = getValidStatusUserInput(maxLengthValidator);
 
         System.out.println("Enter priority (1 - 5 or '')");
-        char priority = getValidPriorityUserInput(maxLengthValidator);
+        char priority = getValidPriorityUserInput(maxLengthValidatorWithoutEmptyCheck);
         System.out.println("Enter anticipated release date (yyyy-mm-dd or '')");
         LocalDate anticipatedReleaseDate = getValidLocalDateInputOrNull();
 
@@ -284,7 +287,7 @@ public class TextUI {
      */
     //---
     public void doAddProduct() {
-        InputValidator maxLengthValidator = (input, length) -> input.length() <= length;
+        InputValidator maxLengthValidator = (input, length) -> input.length() <= length && !input.isEmpty();
 
         // product name user input
         System.out.println("Enter new product name (length: 10 max)");
@@ -307,7 +310,7 @@ public class TextUI {
      */
     //---
     public void doAddRelease() {
-        InputValidator maxLengthValidator = (input, length) -> input.length() <= length;
+        InputValidator maxLengthValidator = (input, length) -> input.length() <= length && !input.isEmpty();
         String productName = selectProduct();
         if (productName == null) {
             return;
@@ -464,7 +467,6 @@ public class TextUI {
     //---
     public String selectRequester() {
         Scanner keyboard = new Scanner(System.in);
-        String requesterEmail;
         String input;
         int page = 0;
 
@@ -507,12 +509,13 @@ public class TextUI {
                 default:
                     try {
                         int selection = Integer.parseInt(input) - 1;
-                        boolean inputOk = selection >= 0 && selection <= emails.length;
+                        boolean inputOk = (selection >= 0)
+                                && (selection < emails.length)
+                                && (emails [selection] != null);
                         if (!inputOk) {
                             System.out.println("Error: Please enter a valid selection");
                         } else {
-                            requesterEmail = emails[selection];
-                            return requesterEmail;
+                            return emails[selection];
                         }
                     } catch (NumberFormatException e) {
                         System.out.println("Error: Please enter a valid selection");
@@ -531,7 +534,6 @@ public class TextUI {
     //---
     public String selectProduct() {
         Scanner keyboard = new Scanner(System.in);
-        String productName;
         String input;
         int page = 0;
 
@@ -557,7 +559,7 @@ public class TextUI {
                     // reset to first page if it's the last
                     try {
                         page += 1;
-                        boolean exceedsFileSize = page * PAGE_SIZE * Requester.BYTES_SIZE_REQUESTER
+                        boolean exceedsFileSize = page * PAGE_SIZE * Product.BYTES_SIZE_PRODUCT
                                 >= manager.getProductFileSize();
                         if (exceedsFileSize) {
                             page = 0;
@@ -569,12 +571,13 @@ public class TextUI {
                 default:
                     try {
                         int selection = Integer.parseInt(input) - 1;
-                        boolean inputOk = selection >= 0 && selection <= products.length;
+                        boolean inputOk = (selection >= 0)
+                                && (selection < products.length)
+                                && (products[selection] != null);
                         if (!inputOk) {
                             System.out.println("Error: Please enter a valid selection");
                         } else {
-                            productName = products[selection];
-                            return productName;
+                            return products[selection];
                         }
                     } catch (NumberFormatException e) {
                         System.out.println("Error: Please enter a valid selection");
@@ -593,7 +596,6 @@ public class TextUI {
     //---
     public String selectRelease(String productName) {
         Scanner keyboard = new Scanner(System.in);
-        String releaseName;
         String lastReleaseName = null;
         String input;
 
@@ -622,12 +624,13 @@ public class TextUI {
                 default:
                     try {
                         int selection = Integer.parseInt(input) - 1;
-                        boolean inputOk = selection >= 0 && selection <= releases.length;
+                        boolean inputOk = (selection >= 0)
+                                && (selection < releases.length)
+                                && releases[selection] != null;
                         if (!inputOk) {
                             System.out.println("Error: Please enter a valid selection");
                         } else {
-                            releaseName = releases[selection];
-                            return releaseName;
+                            return releases[selection];
                         }
                     } catch (NumberFormatException e) {
                         System.out.println("Error: Please enter a valid selection");
@@ -649,7 +652,6 @@ public class TextUI {
         Scanner keyboard = new Scanner(System.in);
         ChangeItem[] changeItems;
         int lastChangeID = -1;
-        int changeID;
         String input;
 
         while (true) {
@@ -701,12 +703,13 @@ public class TextUI {
                 default:
                     try {
                         int selection = Integer.parseInt(input) - 1;
-                        boolean inputOk = selection >= 0 && selection <= changeItems.length;
+                        boolean inputOk = (selection >= 0)
+                                && (selection < changeItems.length)
+                                && ( changeItems[selection] != null);
                         if (!inputOk) {
                             System.out.println("Error: Please enter a valid selection");
                         } else {
-                            changeID = changeItems[selection].getChangeID();
-                            return changeID;
+                            return changeItems[selection].getChangeID();
                         }
                     } catch (NullPointerException e) {
                         System.out.println("Error: Please enter a valid selection");
@@ -858,7 +861,7 @@ public class TextUI {
         System.out.print("> ");
         input = keyboard.nextLine();
         while (!validator.isValid(input, length)) {
-            System.out.println("Error: Please enter valid input length");
+            System.out.println("Error: Please enter valid input");
             System.out.print("> ");
             input = keyboard.nextLine();
         }
