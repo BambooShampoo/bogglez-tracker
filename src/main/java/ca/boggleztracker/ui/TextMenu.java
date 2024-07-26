@@ -3,6 +3,7 @@
  * Revision History:
  * - 2024-06-29: Function and variable declarations
  * - 2024-07-09: Modified getSelection() method
+ *  -2024-07-25: Modified error messages for invalid menu item input
  * Purpose:
  * TextMenu class is responsible for displaying and handling user input of the various menus.
  * This class uses an array of MenuEntry objects to represent menu options and their
@@ -127,6 +128,7 @@ public class TextMenu {
      */
     //---
     public int getSelection() {
+
         return getNumberBetween(MINIMUM_SELECTION_NUMBER, entries.length);
     }
 
@@ -138,19 +140,30 @@ public class TextMenu {
      * @return (out) int - returns the selection of user.
      */
     static public int getNumberBetween(int min, int max) {
-        System.out.println("ENTER [" + min + "-" + max + "]:");
-        System.out.print("> ");
         Scanner keyboard = new Scanner(System.in);
-        boolean inputOk;
         int selection;
 
         while (true) {
-            selection = keyboard.nextInt();
-            inputOk = selection >= min && selection <= max;
-            if (!inputOk) {
-                System.out.println("Error: Please enter a selection between " + min + " and " + max);
-            } else {
-                break;
+            System.out.println("ENTER [" + min + "-" + max + "]:");
+            System.out.print("> ");
+
+            String input = keyboard.nextLine().trim();
+
+            if(input.isEmpty()) {
+                System.out.println("Error: Input can not be empty, please enter a integer between " + min + " and " + max);
+                continue;
+            }
+
+            try {
+                selection = Integer.parseInt(input);
+
+                if (selection < min || selection > max){
+                    System.out.println("Error: Please enter a selection between " + min + " and " + max);
+                } else {
+                    break;
+                }
+            } catch (NumberFormatException e) { //
+                System.out.println("Error: Please enter a valid integer between " + min + " and " + max);
             }
         }
         return selection;

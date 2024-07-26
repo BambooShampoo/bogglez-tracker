@@ -7,6 +7,7 @@
  * - 2024-07-10: implemented add requester user interaction
  * - 2024-07-13: implemented add all add user interactions
  * - 2024-07-16: implemented all selection & report interactions
+ * - 2024-07-25: Ignore department letter case, fixed minor text bugs, added program startup and shutdown messages
  * Purpose:
  * TextUI class is responsible for managing the user interface (UI) of the bug tracker
  * application. The class creates TextMenu objects and handles the different
@@ -62,6 +63,7 @@ public class TextUI {
      */
     //---
     public void start() {
+        System.out.println("\nWelcome to Bogglez Tracker!\n");
         TextMenu.MenuEntry[] menuEntries = new TextMenu.MenuEntry[] {
                 new TextMenu.MenuEntry("Requester", this::requesterMenu),
                 new TextMenu.MenuEntry("Issue", this::issueMenu),
@@ -726,7 +728,7 @@ public class TextUI {
         String department = "";
         boolean departmentValid = false;
         while (!departmentValid) {
-            department = getStringUserInput(Requester.MAX_DEPARTMENT, validator);
+            department = getStringUserInput(Requester.MAX_DEPARTMENT, validator).toUpperCase();
             departmentValid = department.equals("QA") || department.equals("M")
                     || department.equals("PD") || department.equals("S")
                     || department.isEmpty();
@@ -754,7 +756,7 @@ public class TextUI {
                     || priority.equals("3") || priority.equals("4")
                     || priority.equals("5") || priority.isEmpty();
             if (!priorityValid) {
-                System.out.println("Error: Please enter a valid department");
+                System.out.println("Error: Please enter a valid priority");
             }
         }
         if (priority.isEmpty()) {
@@ -894,6 +896,7 @@ public class TextUI {
     //---
     public void exitSystem() {
         manager.closeFiles();
+        System.out.println("\nThank you for using Bogglez Tracker!");
         TextMenu.setShouldMainMenuRepeat(false);
     }
 }
