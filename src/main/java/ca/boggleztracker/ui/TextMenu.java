@@ -62,32 +62,6 @@ public class TextMenu {
         }
     }
 
-    /**
-     * Gets a valid user input based on menu range.
-     *
-     * @param min (in) int - minimum number user input can be.
-     * @param max (in) out - maximum number user input can be.
-     * @return (out) int - returns the selection of user.
-     */
-    static public int getNumberBetween(int min, int max) {
-        System.out.println("ENTER [" + min + "-" + max + "]:");
-        System.out.print("> ");
-        Scanner keyboard = new Scanner(System.in);
-        boolean inputOk;
-        int selection;
-
-        while (true) {
-            selection = keyboard.nextInt();
-            inputOk = selection >= min && selection <= max;
-            if (!inputOk) {
-                System.out.println("Error: Please enter a selection between " + min + " and " + max);
-            } else {
-                break;
-            }
-        }
-        return selection;
-    }
-
     //=============================
     // Constructors
     //=============================
@@ -156,10 +130,7 @@ public class TextMenu {
      * @return (out) int - user input selection number.
      */
     //---
-    public int getSelection() {
-
-        return getNumberBetween(MINIMUM_SELECTION_NUMBER, entries.length);
-    }
+    public int getSelection() {return getNumberBetween(MINIMUM_SELECTION_NUMBER, entries.length);}
 
     /**
      * Gets a valid user input based on menu range.
