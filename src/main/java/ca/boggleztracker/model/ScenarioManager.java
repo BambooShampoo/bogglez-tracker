@@ -95,44 +95,6 @@ public class ScenarioManager {
 
     //-----------------------------
     /**
-     * Helper function that generates a random change ID upon instantiation of object.
-     * @return (out) int - random generated change ID.
-     */
-    //---
-    public int generateRandomChangeID() throws IOException{
-        ChangeItem dummy = new ChangeItem();
-        Random rand = new Random();
-        int random = rand.nextInt(1000000);
-        if(changeItemFile.length() == 0){
-            return random;
-        }
-        try{
-            boolean unique = true;
-            int pos = 0;
-            changeItemFile.seek(pos);
-            while (pos < changeItemFile.length()){
-                unique = true;
-                dummy.readChangeItems(changeItemFile);
-                if (dummy.getChangeID() == random){
-                    random = rand.nextInt(1000000);
-                    unique = false;
-                    changeItemFile.seek(0);
-                    break;
-                }
-                pos += ChangeItem.BYTES_SIZE_CHANGE_ITEM;
-            }
-            if(!unique){
-                throw new RuntimeException("Error, no unique ChangeID generated");
-            }
-            return random;
-        }catch (IOException e){
-            System.err.println("Error generating Random ChangeID " + e.getMessage());
-            return -1;
-        }
-    }
-
-    //-----------------------------
-    /**
      * Helper function to pad character array with spaces to ensure
      * it's of desired length.
      *
@@ -290,7 +252,10 @@ public class ScenarioManager {
     public void addChangeItem(String productName, String releaseID, String changeDescription, char priority,
                               String status, LocalDate anticipatedReleaseDate) {
         try {
-            int changeID = generateRandomChangeID();
+            changeItemFile.seek(changeItemFile.length() - ChangeItem.BYTES_SIZE_CHANGE_ITEM);
+            ChangeItem dummy = new ChangeItem();
+            dummy.readChangeItems(changeItemFile);
+            int changeID = dummy.getChangeID() + 1;
             ChangeItem changeItem = new ChangeItem(changeID, productName, releaseID, changeDescription,
                     priority, status, anticipatedReleaseDate);
             changeItemFile.seek(changeItemFile.length());
