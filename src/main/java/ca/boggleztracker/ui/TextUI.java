@@ -105,6 +105,7 @@ public class TextUI {
         // (Strategy Pattern)
         InputValidator maxLengthValidator = (input, length) -> input.length() <= length && !input.isEmpty();
         InputValidator exactLengthValidator = (input, length) -> input.length() == length && !input.isEmpty();
+        InputValidator maxLengthValidatorWithoutEmptyCheck = (input, length) -> input.length() <= length;
 
         // requester name user input
         System.out.println("Enter requester name (length: 30 max)");
@@ -120,7 +121,7 @@ public class TextUI {
 
         // requester department user input
         System.out.println("Enter requester department (QA/M/PD/S/'')");
-        String department = getValidDepartmentUserInput(maxLengthValidator);
+        String department = getValidDepartmentUserInput(maxLengthValidatorWithoutEmptyCheck);
 
         // confirmation of creation
         System.out.println("Confirming entry of " + name + "?" + " (Y/N)");

@@ -250,11 +250,16 @@ public class ScenarioManager {
     //---
     public void addChangeItem(String productName, String releaseID, String changeDescription, char priority,
                               String status, LocalDate anticipatedReleaseDate) {
+        int changeID;
         try {
-            changeItemFile.seek(changeItemFile.length() - ChangeItem.BYTES_SIZE_CHANGE_ITEM);
-            ChangeItem dummy = new ChangeItem();
-            dummy.readChangeItems(changeItemFile);
-            int changeID = dummy.getChangeID() + 1;
+            if (changeItemFile.length() == 0) {
+                changeID = 0;
+            } else {
+                ChangeItem dummy = new ChangeItem();
+                changeItemFile.seek(changeItemFile.length() - ChangeItem.BYTES_SIZE_CHANGE_ITEM);
+                dummy.readChangeItems(changeItemFile);
+                changeID = dummy.getChangeID() + 1;
+            }
             ChangeItem changeItem = new ChangeItem(changeID, productName, releaseID, changeDescription,
                     priority, status, anticipatedReleaseDate);
             changeItemFile.seek(changeItemFile.length());
