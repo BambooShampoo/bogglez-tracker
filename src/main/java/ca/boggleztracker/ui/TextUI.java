@@ -462,7 +462,7 @@ public class TextUI {
             }
         }
 
-        System.out.println("0) Return to report menu");
+        System.out.println("0) Return to menu");
         System.out.println("N) List next emails");
         System.out.println("ENTER:");
     }
@@ -700,7 +700,7 @@ public class TextUI {
                         new String(item.getStatus()).trim(), item.getPriority(), item.getAnticipatedReleaseDate());
             }
         }
-        System.out.println("0) Return to issue menu");
+        System.out.println("0) Return to menu");
         System.out.println("N) List next change items");
         System.out.println("C) Create new change item");
         System.out.println("ENTER:");
@@ -720,7 +720,7 @@ public class TextUI {
                 System.out.println(i + 1 + ") " + elements[i]);
             }
         }
-        System.out.println("0) Return to issue menu");
+        System.out.println("0) Return to menu");
         System.out.println("N) List next " + header.toLowerCase());
         System.out.println("ENTER:");
     }
