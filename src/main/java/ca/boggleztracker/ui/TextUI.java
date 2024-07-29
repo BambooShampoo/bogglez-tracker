@@ -8,6 +8,7 @@
  * - 2024-07-13: implemented add all add user interactions
  * - 2024-07-16: implemented all selection & report interactions
  * - 2024-07-25: Ignore department letter case, fixed minor text bugs, added program startup and shutdown messages
+ * - 2024-07-29: Refactored selection methods and created display list method
  * Purpose:
  * TextUI class is responsible for managing the user interface (UI) of the bug tracker
  * application. The class creates TextMenu objects and handles the different
@@ -420,27 +421,9 @@ public class TextUI {
         String input;
         String lastEmail = null;
 
-
         while (true) {
-            System.out.println("Requester Emails to Notify:");
-            System.out.println("==========================================================================");
-            System.out.printf("   %-30s  %-24s  %-14s\n", "Name", "Emails", "Phone Number");
-            System.out.println("   ------------------------------  ------------------------  --------------");
-
             Requester[] requesters = manager.generateEmailsPage(changeID, lastEmail, PAGE_SIZE);
-
-
-            for (int i = 0; i < requesters.length; i++) {
-                if (requesters[i] != null) {
-                    System.out.print(i + 1 + ")") ;
-                    System.out.printf(" %-30s  %-24s  %-14s\n", new String(requesters[i].getName()), new String(requesters[i].getEmail()),
-                            requesters[i].formatPhoneNumber());
-                }
-            }
-            System.out.println("0) Return to report menu");
-            System.out.println("N) List next emails");
-            System.out.println("ENTER:");
-
+            displayNotificationHeader(requesters);
             input = keyboard.nextLine().toLowerCase();
 
             switch (input) {
@@ -461,6 +444,31 @@ public class TextUI {
 
     //-----------------------------
     /**
+     * Utility Method to display the report header.
+     * @param requesters (in) Requester[] - the requesters to be listed out.
+     */
+    //---
+    private void displayNotificationHeader(Requester[] requesters) {
+        System.out.println("Requester Emails to Notify:");
+        System.out.println("==========================================================================");
+        System.out.printf("   %-30s  %-24s  %-14s\n", "Name", "Emails", "Phone Number");
+        System.out.println("   ------------------------------  ------------------------  --------------");
+
+        for (int i = 0; i < requesters.length; i++) {
+            if (requesters[i] != null) {
+                System.out.print(i + 1 + ")") ;
+                System.out.printf(" %-30s  %-24s  %-14s\n", new String(requesters[i].getName()), new String(requesters[i].getEmail()),
+                        requesters[i].formatPhoneNumber());
+            }
+        }
+
+        System.out.println("0) Return to report menu");
+        System.out.println("N) List next emails");
+        System.out.println("ENTER:");
+    }
+
+    //-----------------------------
+    /**
      * Displays a list of requesters and retrieves requester email
      *
      * @return (out) String - the selected requester email.
@@ -471,21 +479,10 @@ public class TextUI {
         String input;
         int page = 0;
 
+        // display list of requester and handle user input
         while (true) {
-
-            // list out requester emails
-            System.out.println("==Requester Emails==");
             String[] emails = manager.generateRequesterPage(page, PAGE_SIZE);
-            for (int i = 0; i < emails.length; i++) {
-                if (emails[i] != null) {
-                    System.out.println(i + 1 + ") " + emails[i]);
-                }
-            }
-            System.out.println("0) Return to issue menu");
-            System.out.println("N) List next emails");
-            System.out.println("C) Create new requester");
-            System.out.println("ENTER:");
-
+            displayList(emails, "Requester Emails");
             input = keyboard.nextLine().toLowerCase();
 
             switch (input) {
@@ -538,19 +535,10 @@ public class TextUI {
         String input;
         int page = 0;
 
+        // display list of products and handle user input
         while (true) {
-            // list out product names
-            System.out.println("==Product==");
             String[] products = manager.generateProductPage(page, PAGE_SIZE);
-            for (int i = 0; i < products.length; i++) {
-                if (products[i] != null) {
-                    System.out.println(i + 1 + ") " + products[i]);
-                }
-            }
-            System.out.println("0) Return to issue menu");
-            System.out.println("N) List next products");
-            System.out.println("ENTER:");
-
+            displayList(products, "Products");
             input = keyboard.nextLine().toLowerCase();
 
             switch (input) {
@@ -600,19 +588,10 @@ public class TextUI {
         String lastReleaseName = null;
         String input;
 
+        // display list of releases and handle user input
         while (true) {
-            // list out product names
-            System.out.println("==Release==");
             String[] releases = manager.generateReleasePage(productName, lastReleaseName, PAGE_SIZE);
-            for (int i = 0; i < releases.length; i++) {
-                if (releases[i] != null) {
-                    System.out.println(i + 1 + ") " + releases[i]);
-                }
-            }
-            System.out.println("0) Return to issue menu");
-            System.out.println("N) List next releases");
-            System.out.println("ENTER:");
-
+            displayList(releases, "Releases");
             input = keyboard.nextLine().toLowerCase();
 
             switch (input) {
@@ -641,7 +620,6 @@ public class TextUI {
         }
     }
 
-
     //-----------------------------
     /**
      * Displays a list of change items based on provided release and returns changeID.
@@ -656,13 +634,6 @@ public class TextUI {
         String input;
 
         while (true) {
-            // list out changes
-            System.out.println("Changes for " + productName.trim() + " " + releaseID.trim() + ":");
-            System.out.println("=======================================================================================");
-            System.out.println("                                                                            Anticipated");
-            System.out.printf("   %10s  %-30s  %12s  %10s  %14s\n", "ChangeID", "Description", "Status", "Priority", " Release Date");
-            System.out.println("   ----------  ------------------------------  ------------  ----------  --------------");
-
             if (mode.equals("pending")) {
                 changeItems = manager.generateFilteredChangesPage(productName, lastChangeID, PAGE_SIZE, mode);
             } else if (mode.equals("completed")) {
@@ -671,19 +642,7 @@ public class TextUI {
                 changeItems = manager.generateChangeItemPage(productName, releaseID, lastChangeID, PAGE_SIZE);
             }
 
-            for (int i = 0; i < changeItems.length; i++) {
-                if (changeItems[i] != null) {
-                    ChangeItem item = changeItems[i];
-                    System.out.print(i + 1 + ") ") ;
-                    System.out.printf(" %9d  %-30s  %12s  %10s  %14s\n", item.getChangeID(), new String(item.getChangeDescription()),
-                            new String(item.getStatus()).trim(), item.getPriority(), item.getAnticipatedReleaseDate());
-                }
-            }
-            System.out.println("0) Return to issue menu");
-            System.out.println("N) List next change items");
-            System.out.println("C) Create new change item");
-            System.out.println("ENTER:");
-
+            displayChangesHeader(productName, releaseID, changeItems);
             input = keyboard.nextLine().toLowerCase();
 
             // handling user input
@@ -712,12 +671,58 @@ public class TextUI {
                         } else {
                             return changeItems[selection].getChangeID();
                         }
-                    } catch (NullPointerException e) {
+                    } catch (NullPointerException | NumberFormatException e) {
                         System.out.println("Error: Please enter a valid selection");
                     }
                     break;
             }
         }
+    }
+
+    //-----------------------------
+    /**
+     * Utility Method to display the change item header.
+     * @param changeItems (in) Requester[] - the change items to be listed out.
+     */
+    //---
+    private void displayChangesHeader(String productName, String releaseID, ChangeItem[] changeItems) {
+        System.out.println("Changes for " + productName.trim() + " " + releaseID.trim() + ":");
+        System.out.println("=======================================================================================");
+        System.out.println("                                                                            Anticipated");
+        System.out.printf("   %10s  %-30s  %12s  %10s  %14s\n", "ChangeID", "Description", "Status", "Priority", " Release Date");
+        System.out.println("   ----------  ------------------------------  ------------  ----------  --------------");
+
+        for (int i = 0; i < changeItems.length; i++) {
+            if (changeItems[i] != null) {
+                ChangeItem item = changeItems[i];
+                System.out.print(i + 1 + ") ") ;
+                System.out.printf(" %9d  %-30s  %12s  %10s  %14s\n", item.getChangeID(), new String(item.getChangeDescription()),
+                        new String(item.getStatus()).trim(), item.getPriority(), item.getAnticipatedReleaseDate());
+            }
+        }
+        System.out.println("0) Return to issue menu");
+        System.out.println("N) List next change items");
+        System.out.println("C) Create new change item");
+        System.out.println("ENTER:");
+    }
+
+    //-----------------------------
+    /**
+     * Utility method to display list of specified header
+     * @param elements (in) String[] - elements to be displayed.
+     * @param header (in) String - type of header
+     */
+    //---
+    void displayList(String[] elements, String header) {
+        System.out.println("==" + header + "==");
+        for (int i = 0; i < elements.length; i++) {
+            if (elements[i] != null) {
+                System.out.println(i + 1 + ") " + elements[i]);
+            }
+        }
+        System.out.println("0) Return to issue menu");
+        System.out.println("N) List next " + header.toLowerCase());
+        System.out.println("ENTER:");
     }
 
     //-----------------------------
