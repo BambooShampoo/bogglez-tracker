@@ -182,6 +182,7 @@ public class TextUI {
         System.out.println("Confirming entry of new change request?" + " (Y/N)");
         if (getYesOrNoUserInput()) {
             manager.addChangeRequest(changeID, productName, releaseID, requesterEmail, date);
+            System.out.println("New change request has been added!");
         }
         System.out.println("Do you wish to add another change request? (Y/N)");
         if (getYesOrNoUserInput()) {
@@ -214,6 +215,7 @@ public class TextUI {
         System.out.println("Confirming entry of new change item?" + " (Y/N)");
         if (getYesOrNoUserInput()) {
             manager.addChangeItem(productName, releaseID, changeDescription, priority, status, anticipatedReleaseDate);
+            System.out.println("New change item has been added!");
         }
         System.out.println("Do you wish to add another change item? (Y/N)");
         if (getYesOrNoUserInput()) {
@@ -254,10 +256,12 @@ public class TextUI {
 
         // confirmation of modification
         System.out.println("Confirming entry of modified change item?" + " (Y/N)");
+        System.out.print("> ");
         if (getYesOrNoUserInput()) {
             ChangeItem changeItem = new ChangeItem(changeID, productName, releaseID, changeDescription,
                     priority, status, anticipatedReleaseDate);
             manager.modifyChangeItem(changeID, changeItem);
+            System.out.println("Change Item has been modified! ");
         }
         System.out.println("Do you wish to modify another change item? (Y/N)");
         if (getYesOrNoUserInput()) {
@@ -355,9 +359,11 @@ public class TextUI {
 
         // confirmation of modification
         System.out.println("Confirming entry of modified release ID " + releaseID.trim() + "?" + " (Y/N)");
+        System.out.print("> ");
         if (getYesOrNoUserInput()) {
             Release release = new Release(productName, releaseID, releaseDate);
             manager.modifyRelease(releaseID, release);
+            System.out.println("Release has been modified!");
         }
         System.out.println("Do you wish to modify another product release? (Y/N)");
         if (getYesOrNoUserInput()) {
@@ -539,6 +545,7 @@ public class TextUI {
         while (true) {
             String[] products = manager.generateProductPage(page, PAGE_SIZE);
             displayList(products, "Products");
+            System.out.print("> ");
             input = keyboard.nextLine().toLowerCase();
 
             switch (input) {
@@ -592,6 +599,7 @@ public class TextUI {
         while (true) {
             String[] releases = manager.generateReleasePage(productName, lastReleaseName, PAGE_SIZE);
             displayList(releases, "Releases");
+            System.out.print("> ");
             input = keyboard.nextLine().toLowerCase();
 
             switch (input) {
