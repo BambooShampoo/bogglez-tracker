@@ -243,6 +243,9 @@ public class TextUI {
         }
 
         int changeID = selectChangeItem(productName, releaseID, "");
+        if (changeID == -1) {
+            return;
+        }
 
         System.out.println("Enter change description (length: 30 max)");
         String changeDescription = getStringUserInput(ChangeItem.MAX_DESCRIPTION, maxLengthValidator);
