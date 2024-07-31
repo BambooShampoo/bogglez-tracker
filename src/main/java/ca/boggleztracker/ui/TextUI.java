@@ -105,7 +105,7 @@ public class TextUI {
         // these are passed to the getUserInputString to determine length checking
         // (Strategy Pattern)
         InputValidator maxLengthValidator = (input, length) -> input.length() <= length && !input.isEmpty();
-        InputValidator exactLengthValidator = (input, length) -> input.length() == length && !input.isEmpty();
+        InputValidator exactLengthValidator = (input, length) -> input.length() == length && !input.isEmpty() && !input.startsWith("0");
         InputValidator maxLengthValidatorWithoutEmptyCheck = (input, length) -> input.length() <= length;
 
         // requester name user input
