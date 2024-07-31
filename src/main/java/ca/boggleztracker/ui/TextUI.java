@@ -669,18 +669,20 @@ public class TextUI {
                     doAddChangeItem(productName, releaseID);
                     break;
                 default:
-                    try {
-                        int selection = Integer.parseInt(input) - 1;
-                        boolean inputOk = (selection >= 0)
-                                && (selection < changeItems.length)
-                                && ( changeItems[selection] != null);
-                        if (!inputOk) {
+                    if (!mode.equals("pending")) {
+                        try {
+                            int selection = Integer.parseInt(input) - 1;
+                            boolean inputOk = (selection >= 0)
+                                    && (selection < changeItems.length)
+                                    && ( changeItems[selection] != null);
+                            if (!inputOk) {
+                                System.out.println("Error: Please enter a valid selection");
+                            } else {
+                                return changeItems[selection].getChangeID();
+                            }
+                        } catch (NullPointerException | NumberFormatException e) {
                             System.out.println("Error: Please enter a valid selection");
-                        } else {
-                            return changeItems[selection].getChangeID();
                         }
-                    } catch (NullPointerException | NumberFormatException e) {
-                        System.out.println("Error: Please enter a valid selection");
                     }
                     break;
             }
