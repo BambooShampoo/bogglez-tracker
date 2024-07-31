@@ -300,7 +300,7 @@ public class TextUI {
         String name = getStringUserInput(Product.MAX_PRODUCT_NAME, maxLengthValidator);
 
         // confirmation of creation
-        System.out.println("Confirming entry of new " + name + "?" + " (Y/N)");
+        System.out.println("Confirming entry of new product " + name + "?" + " (Y/N)");
         if (getYesOrNoUserInput()) {
             manager.addProduct(name);
         }
