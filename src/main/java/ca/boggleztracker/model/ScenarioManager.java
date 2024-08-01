@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 
 public class ScenarioManager {
     //=============================
@@ -228,9 +229,23 @@ public class ScenarioManager {
                                  String requesterEmail, LocalDate reportedDate) {
         ChangeRequest changeRequest = new ChangeRequest(changeID, productName,
                 reportedRelease, requesterEmail, reportedDate);
+        ChangeRequest compare = new ChangeRequest(0, "",
+                "", "", LocalDate.of(2024,8,1));
         try {
+            int pos = 0;
+            while(pos <= changeItemFile.length()){
+                changeRequestFile.seek(pos);
+                compare.readChangeRequest(changeRequestFile);
+                if(compare.getChangeID() == changeRequest.getChangeID()
+                        && Arrays.equals(compare.getRequesterEmail(), changeRequest.getRequesterEmail())){
+                    System.out.println("A change request of for this Change Item has already been submitted by this requester");
+                    return;
+                }
+                pos += ChangeRequest.BYTES_SIZE_CHANGE_REQUEST;
+            }
             changeRequestFile.seek(changeRequestFile.length());
             changeRequest.writeChangeRequest(changeRequestFile);
+            System.out.println("New change request has been added!");
         } catch (IOException e) {
             System.err.println("Error writing request to file " + e.getMessage());
         }
