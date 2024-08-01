@@ -22,6 +22,7 @@ import ca.boggleztracker.model.*;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class TextUI {
@@ -182,7 +183,6 @@ public class TextUI {
         System.out.println("Confirming entry of new change request?" + " (Y/N)");
         if (getYesOrNoUserInput()) {
             manager.addChangeRequest(changeID, productName, releaseID, requesterEmail, date);
-            System.out.println("New change request has been added!");
         }
         System.out.println("Do you wish to add another change request? (Y/N)");
         if (getYesOrNoUserInput()) {
@@ -462,12 +462,15 @@ public class TextUI {
         System.out.println("==========================================================================");
         System.out.printf("   %-30s  %-24s  %-14s\n", "Name", "Emails", "Phone Number");
         System.out.println("   ------------------------------  ------------------------  --------------");
-
+        Requester tempEmail = new Requester("","",12223334444L,"");
         for (int i = 0; i < requesters.length; i++) {
             if (requesters[i] != null) {
-                System.out.print(i + 1 + ")") ;
-                System.out.printf(" %-30s  %-24s  %-14s\n", new String(requesters[i].getName()), new String(requesters[i].getEmail()),
-                        requesters[i].formatPhoneNumber());
+                if (!Arrays.equals(tempEmail.getEmail(), requesters[i].getEmail())) {
+                    System.out.print(i + 1 + ")") ;
+                    System.out.printf(" %-30s  %-24s  %-14s\n", new String(requesters[i].getName()), new String(requesters[i].getEmail()),
+                            requesters[i].formatPhoneNumber());
+                    tempEmail = requesters[i];
+                }
             }
         }
 
