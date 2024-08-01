@@ -141,11 +141,14 @@ public class ChangeItem {
     //-----------------------------
     /**
      * returns the date of the object that it calls from.
-     * @return (out) LocalDate - date of the object.
+     * @return (out) String - date of the object.
      */
     //---
-    public LocalDate getAnticipatedReleaseDate() {
-        return anticipatedReleaseDate;
+    public String getAnticipatedReleaseDate() {
+        if (anticipatedReleaseDate == null) {
+            return "";
+        }
+        return anticipatedReleaseDate.toString();
     }
 
     //-----------------------------

@@ -105,7 +105,7 @@ public class TextUI {
         // these are passed to the getUserInputString to determine length checking
         // (Strategy Pattern)
         InputValidator maxLengthValidator = (input, length) -> input.length() <= length && !input.isEmpty();
-        InputValidator exactLengthValidator = (input, length) -> input.length() == length && !input.isEmpty();
+        InputValidator exactLengthValidator = (input, length) -> input.length() == length && !input.isEmpty() && !input.startsWith("0");
         InputValidator maxLengthValidatorWithoutEmptyCheck = (input, length) -> input.length() <= length;
 
         // requester name user input
@@ -243,6 +243,9 @@ public class TextUI {
         }
 
         int changeID = selectChangeItem(productName, releaseID, "");
+        if (changeID == -1) {
+            return;
+        }
 
         System.out.println("Enter change description (length: 30 max)");
         String changeDescription = getStringUserInput(ChangeItem.MAX_DESCRIPTION, maxLengthValidator);
@@ -300,7 +303,7 @@ public class TextUI {
         String name = getStringUserInput(Product.MAX_PRODUCT_NAME, maxLengthValidator);
 
         // confirmation of creation
-        System.out.println("Confirming entry of new " + name + "?" + " (Y/N)");
+        System.out.println("Confirming entry of new product " + name + "?" + " (Y/N)");
         if (getYesOrNoUserInput()) {
             manager.addProduct(name);
         }
@@ -669,18 +672,20 @@ public class TextUI {
                     doAddChangeItem(productName, releaseID);
                     break;
                 default:
-                    try {
-                        int selection = Integer.parseInt(input) - 1;
-                        boolean inputOk = (selection >= 0)
-                                && (selection < changeItems.length)
-                                && ( changeItems[selection] != null);
-                        if (!inputOk) {
+                    if (!mode.equals("pending")) {
+                        try {
+                            int selection = Integer.parseInt(input) - 1;
+                            boolean inputOk = (selection >= 0)
+                                    && (selection < changeItems.length)
+                                    && ( changeItems[selection] != null);
+                            if (!inputOk) {
+                                System.out.println("Error: Please enter a valid selection");
+                            } else {
+                                return changeItems[selection].getChangeID();
+                            }
+                        } catch (NullPointerException | NumberFormatException e) {
                             System.out.println("Error: Please enter a valid selection");
-                        } else {
-                            return changeItems[selection].getChangeID();
                         }
-                    } catch (NullPointerException | NumberFormatException e) {
-                        System.out.println("Error: Please enter a valid selection");
                     }
                     break;
             }
