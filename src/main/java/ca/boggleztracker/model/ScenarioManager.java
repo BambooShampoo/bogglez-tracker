@@ -233,7 +233,7 @@ public class ScenarioManager {
                 "", "", LocalDate.of(2024,8,1));
         try {
             int pos = 0;
-            while(pos <= changeRequestFile.length() && changeRequestFile.length() != 0){
+            while(pos < changeRequestFile.length() && changeRequestFile.length() != 0){
                 changeRequestFile.seek(pos);
                 compare.readChangeRequest(changeRequestFile);
                 if(compare.getChangeID() == changeRequest.getChangeID()
